@@ -8,4 +8,4 @@ void User::checkIn() {}
 
 void User::checkOut() {}
 
-string User::watchAvbRooms() {}
+// string User::watchAvbRooms() {}

@@ -28,7 +28,8 @@ int main()
     else
     {
         fprintf(stderr, "Opened database successfully\n");
-        const char* query = "SELECT * FROM Rooms WHERE isTaken = 0 AND class = 'A'";
+        string queryString = "SELECT * FROM Rooms WHERE isTaken = 0 AND class = 'A'";
+        const char* query  = queryString.c_str();
         rc = sqlite3_exec(db,query,callback,0, &zErrMsg);
     }
     sqlite3_close(db);

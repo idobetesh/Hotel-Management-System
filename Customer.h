@@ -13,8 +13,8 @@ private:
 
 public:
     Customer(string name, string email, string phone);
+    string getName();
+    string getEmail();
+    string getPhone();
     ~Customer() {}
-    string getName() { return _name; }
-    string getEmail() { return _email; }
-    string getPhone() { return _phone; }
 };

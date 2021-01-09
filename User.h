@@ -16,7 +16,7 @@ public:
 
     string getName() { return _name; }
     void bookRoom(int roomNumber) {}
-    virtual void checkIn() = 0;
+    void checkIn();
     void checkOut() {}
-    string watchAvbRooms() {}
+    // string watchAvbRooms() {}
 };
