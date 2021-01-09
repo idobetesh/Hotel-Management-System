@@ -9,7 +9,7 @@ private:
     int _id;
     bool _state;
     char _class;
-    unordered_map<char,int> prices;
+    // unordered_map<char,int> prices;
 public:
     Room();
     ~Room();
