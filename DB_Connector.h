@@ -38,10 +38,9 @@ public:
             string n = c->getName();
             string e = c->getEmail();
             string p = c->getPhone();
-            
+
             fprintf(stderr, "Opened database successfully\n");
             string queryString = "INSERT INTO Customers(name, email, phone) values('" + n + "', '" + e + "', '" + p + "')";
-            // string queryString = "INSERT INTO Customers(name, email, phone) values('yali sofer', 'yali@alla.com', '092834532')";
             cout << queryString << endl;
             const char *query = queryString.c_str();
             rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
