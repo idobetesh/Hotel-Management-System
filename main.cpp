@@ -9,7 +9,7 @@ using namespace std;
 void bookRoom(Employee *e)
 {
     // int userID;
-    // string n, e, p;
+    // string n, e, p, sDate, eDate;
     // cout << "Please enter the client details - \n" << "id - " << endl;
     // cin >> userID;
     // cout << "Name - ";
@@ -18,8 +18,15 @@ void bookRoom(Employee *e)
     // cin >> e;
     // cout << "Phone - ";
     // cin >> p;
-    // e->
+    // cout << " Start date in format yyyy-mm-dd";
+    // cin >> sDate;
+    // cout << " End date in format yyyy-mm-dd";
+    // cin >> eDate;
     // Customer *c = new Customer(n,e,p);
+    // e->checkIfCustomerExist(c); // if its not exist - creates new customer in db else does nothing
+    // bool isPossible = e->bookRoom();
+    // if(!isPossible) { cout << "Sorry but a room in the class that you wished for does not exist... would you like to change the dates? "; }
+
 
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer 
@@ -30,7 +37,7 @@ void bookRoom(Employee *e)
 void checkIn()
 {
     int userInput;
-    cout << "Please enter the room number -";
+    cout << "Please enter the room number - ";
     cin >> userInput;
     Manager *e = new Manager(1234, "ido");
     e->checkIn(userInput);
@@ -39,10 +46,26 @@ void checkIn()
 void checkOut()
 {
     int userInput;
-    cout << "Please enter the room number -";
+    cout << "Please enter the room number - ";
     cin >> userInput;
     Manager *e = new Manager(1234, "ido");
     e->checkOut(userInput);
+}
+
+void watchAvbRooms(Employee *e)
+{
+     e->watchAvbRooms();
+}
+
+void Updateprice(Manager *e)
+{
+    char cls;
+    int amount;
+    cout << "What is the room class you want the price to change? ";
+    cin >> cls;
+    cout << "What is the new amount you want to change ?";
+    cin >> amount;
+    e->priceUpdater(cls, amount);
 }
 
 void menu()
@@ -52,13 +75,13 @@ void menu()
     cout << "================ Welcome To Hotel California ================" << endl;
     cout << "if you are a manager enter password, else press *> ";
     cin >> pass;
+    Manager *e = new Manager(1234, "ido");
+
     if (pass == "123")
     {
-        Manager *e = new Manager(1234, "ido");
-
         //e->checkIn(1);
         //e->checkOut(1);
-        e->watchAvbRooms();
+        // e->watchAvbRooms();
 
         cout << "1 - Book a room" << endl;
         cout << "2 - Check-in room" << endl;
@@ -81,18 +104,21 @@ void menu()
     switch (userInput)
     {
     case 1:
-        //bookRoom(e);
+        bookRoom(e);
         break;
     case 2:
         checkIn();
         break;
     case 3:
         checkOut();
-        break;    
+    case 4:
+        watchAvbRooms(e);
+        break;
+    case 5:
+        Updateprice(e);    
     default:
         break;
     }
-    //swich case
 
 };
 
