@@ -29,3 +29,8 @@ void Employee::addCustomer(Customer *c)
 {
   _db->addCustomer(c);   
 }
+
+void Employee::isCustomerExist(Customer *c)
+{
+  _db->isCustomerExist(c);
+}

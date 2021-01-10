@@ -8,22 +8,20 @@ using namespace std;
 
 void bookRoom(Employee *e)
 {
-    // int userID;
-    // string n, e, p, sDate, eDate;
-    // cout << "Please enter the client details - \n" << "id - " << endl;
-    // cin >> userID;
-    // cout << "Name - ";
-    // cin >> n;
-    // cout << "Email - ";
-    // cin >> e;
-    // cout << "Phone - ";
-    // cin >> p;
-    // cout << " Start date in format yyyy-mm-dd";
-    // cin >> sDate;
-    // cout << " End date in format yyyy-mm-dd";
-    // cin >> eDate;
-    // Customer *c = new Customer(n,e,p);
-    // e->checkIfCustomerExist(c); // if its not exist - creates new customer in db else does nothing
+    string n, em, p, sDate, eDate;
+    cout << "Please enter the client details - " << endl;
+    cout << "Name - ";
+    cin >> n;
+    cout << "Email - ";
+    cin >> em;
+    cout << "Phone - ";
+    cin >> p;
+    cout << " Start date in format yyyy-mm-dd ";
+    cin >> sDate;
+    cout << " End date in format yyyy-mm-dd ";
+    cin >> eDate;
+    Customer *c = new Customer(n,em,p);
+    e->isCustomerExist(c); // if its not exist - creates new customer in db else does nothing
     // bool isPossible = e->bookRoom();
     // if(!isPossible) { cout << "Sorry but a room in the class that you wished for does not exist... would you like to change the dates? "; }
 
@@ -79,10 +77,6 @@ void menu()
 
     if (pass == "123")
     {
-        //e->checkIn(1);
-        //e->checkOut(1);
-        // e->watchAvbRooms();
-
         cout << "1 - Book a room" << endl;
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room" << endl;

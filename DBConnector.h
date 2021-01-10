@@ -16,4 +16,5 @@ public:
     void watchAvbRooms();
     void checkIn(int roomNumber);
     void checkOut(int roomNumber);
+    void isCustomerExist(Customer *c);
 };
