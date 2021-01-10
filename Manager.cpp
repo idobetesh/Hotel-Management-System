@@ -1,13 +1,16 @@
 #include "Manager.h"
 
-Manager::Manager(int id, string name) : User(name, id) {}
+Manager::Manager(int id, string name) : Employee(name, id)
+{
+    _db = new DBConnector();
+}
 
-void Manager::financialReport() 
+void Manager::financialReport()
 {
     // TO DO
 }
 
-void Manager::priceUpdater() 
+void Manager::priceUpdater(char cls, int newPrice)
 {
-    // TO DO
+    _db->updatePrice(cls, newPrice);
 }

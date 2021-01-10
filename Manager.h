@@ -1,9 +1,13 @@
 #pragma once
-#include "User.h"
-class Manager : public User 
+#include "Employee.h"
+#include "DB_Connector.h"
+class Manager : public Employee
 {
-    public:
-        Manager(int id, string name) : User(name, id) {}
-        void financialReport();
-        void priceUpdater();
+private:
+    DBConnector *_db;
+
+public:
+    Manager(int id, string name);
+    void financialReport();
+    void priceUpdater(char cls, int newPrice);
 };
