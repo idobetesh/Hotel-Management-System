@@ -1,6 +1,7 @@
 #include "Employee.h"
 
-Employee::Employee(string name, int id) : _name(name), _id(id) {}
+Employee::Employee() {}
+Employee::Employee(int id, string name) : _id(id), _name(name), _db(new DBConnector()){}
 
 // void Employee::bookRoom(int roomNumber) {}
 
@@ -9,3 +10,8 @@ Employee::Employee(string name, int id) : _name(name), _id(id) {}
 // void Employee::checkOut() {}
 
 // string Employee::watchAvbRooms() {}
+
+void Employee::addCustomer(Customer *c) 
+{
+  _db->addCustomer(c);   
+}

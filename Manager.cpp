@@ -1,9 +1,7 @@
 #include "Manager.h"
 
-Manager::Manager(int id, string name) : Employee(name, id)
-{
-    _db = new DBConnector();
-}
+Manager::Manager(int id, string name) : Employee(id, name), _db(new DBConnector()) {}
+
 
 void Manager::financialReport()
 {

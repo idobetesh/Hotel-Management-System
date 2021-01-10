@@ -16,5 +16,4 @@ public:
     void edit();
     bool getState() { return _state; }
     void setState(bool state) { _state = state; }
-
 };
