@@ -1,9 +1,8 @@
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
-// #include "DBConnector.h"
 #include "Customer.h"
-// #include "Employee.h"
+#include "Employee.h"
 #include "Manager.h"
 using namespace std;
 
@@ -15,13 +14,10 @@ void menu()
     cin >> pass;
     if (pass == "123")
     {
-        // DBConnector *db = new DBConnector();
         Customer *c = new Customer("dor oved", "ddsi19@gmail.com", "012445328");
-        // Employee *e = new Employee(1233, "ido");
-        // e->addCustomer(c);
         Manager *m = new Manager(1234, "ido");
-        // m->priceUpdater('A', 2000);
-        m->addCustomer(c);
+        m->priceUpdater('A', 2000);
+
         cout << "1 - Book a room" << endl;
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room " << endl;

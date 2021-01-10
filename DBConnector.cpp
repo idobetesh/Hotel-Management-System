@@ -59,7 +59,7 @@ void DBConnector::updatePrice(char cls, int newPrice)
     else
     {
         fprintf(stderr, "Opened database successfully\n");
-        string queryString = "UPDATE Prices SET class = '" + cls_str + "', price = " + to_string(newPrice) + "WHERE class = '" + cls_str + "'";
+        string queryString = "UPDATE Prices SET class = '" + cls_str + "', price = " + to_string(newPrice) + " WHERE class = '" + cls_str + "'";
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);

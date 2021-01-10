@@ -9,12 +9,14 @@ class Employee
 private:
     int _id;
     string _name;
+
+protected:
     DBConnector *_db;
 
 public:
-    Employee();
+    // Employee();
     Employee(int id, string name);
-    virtual ~Employee();
+    ~Employee();
 
     string getName() { return _name; }
     void addCustomer(Customer *c);

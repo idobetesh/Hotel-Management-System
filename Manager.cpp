@@ -1,11 +1,10 @@
 #include "Manager.h"
 
-Manager::Manager(int id, string name) : Employee(id, name), _db(new DBConnector()) {}
-
+Manager::Manager(int id, string name) : Employee(id, name) {}
 
 void Manager::financialReport()
 {
-    // TO DO
+    cout << "hi";
 }
 
 void Manager::priceUpdater(char cls, int newPrice)
