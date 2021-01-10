@@ -4,8 +4,7 @@ DBConnector::DBConnector() {}
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
-    int i;
-    for (i = 0; i < argc; i++)
+    for (int i = 0; i < argc; i++)
     {
         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
     }
@@ -19,7 +18,7 @@ void DBConnector::addCustomer(Customer *c)
     char *zErrMsg = 0;
     int rc;
 
-    rc = sqlite3_open("./DB/hotel-managment-system.db", &db);
+    rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -49,7 +48,7 @@ void DBConnector::updatePrice(char cls, int newPrice)
 
     string cls_str = string(1, cls);
 
-    rc = sqlite3_open("./DB/hotel-managment-system.db", &db);
+    rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -60,6 +59,78 @@ void DBConnector::updatePrice(char cls, int newPrice)
     {
         fprintf(stderr, "Opened database successfully\n");
         string queryString = "UPDATE Prices SET class = '" + cls_str + "', price = " + to_string(newPrice) + " WHERE class = '" + cls_str + "'";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+    sqlite3_close(db);
+}
+
+void DBConnector::watchAvbRooms()
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT * FROM Rooms WHERE isTaken = 0";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+    sqlite3_close(db);
+}
+
+void DBConnector::checkIn(int roomNumber)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "UPDATE Rooms SET isTaken = 1 WHERE idRoom = " + to_string(roomNumber);
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+    sqlite3_close(db);
+}
+
+void DBConnector::checkOut(int roomNumber)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "UPDATE Rooms SET isTaken = 0 WHERE idRoom = " + to_string(roomNumber);
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);

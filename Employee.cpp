@@ -8,11 +8,22 @@ Employee::Employee(int id, string name) : _id(id), _name(name)
 
 // void Employee::bookRoom(int roomNumber) {}
 
-// void Employee::checkIn() {}
+void Employee::checkIn(int roomNumber)
+{
+    _db->checkIn(roomNumber);
+}
+
+void Employee::checkOut(int roomNumber)
+{
+    _db->checkOut(roomNumber);
+}
 
 // void Employee::checkOut() {}
 
-// string Employee::watchAvbRooms() {}
+void Employee::watchAvbRooms() 
+{
+  _db->watchAvbRooms();
+}
 
 void Employee::addCustomer(Customer *c) 
 {

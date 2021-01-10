@@ -21,7 +21,7 @@ public:
     string getName() { return _name; }
     void addCustomer(Customer *c);
     // void bookRoom(int roomNumber) {}
-    // void checkIn();
-    // void checkOut() {}
-    // string watchAvbRooms() {}
+    void checkIn(int roomNumber);
+    void checkOut(int roomNumber);
+    void watchAvbRooms();
 };
