@@ -217,7 +217,7 @@ void DBConnector::generateReport()
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
 
-    string header = "### This Report was generate on ";
+    string header = "### This Report generateג on ";
     string timeStr(timeStrBuf);
     header += timeStr + " ###\n\n";
     cout << header << endl;
