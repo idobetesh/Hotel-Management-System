@@ -9,6 +9,7 @@ using namespace std;
 void bookRoom(Employee *e)
 {
     string n, em, p, sDate, eDate;
+    char cls;
     cout << "Please enter the client details - " << endl;
     cout << "Name - ";
     fflush(stdin);
@@ -17,14 +18,19 @@ void bookRoom(Employee *e)
     cin >> em;
     cout << "Phone - ";
     cin >> p;
-    cout << " Start date in format yyyy-mm-dd ";
-    cin >> sDate;
-    cout << " End date in format yyyy-mm-dd ";
-    cin >> eDate;
     Customer *c = new Customer(n,em,p);
     e->isCustomerExist(c); // if its not exist - creates new customer in db else does nothing
-    // bool isPossible = e->bookRoom();
-    // if(!isPossible) { cout << "Sorry but a room in the class that you wished for does not exist... would you like to change the dates? "; }
+    //bool isPossible = false;
+    // while(!isPossible){
+    // cout << " Start date in format yyyy-mm-dd ";
+    // cin >> sDate;
+    // cout << " End date in format yyyy-mm-dd ";
+    // cin >> eDate;
+    // cout << "Enter class of room - ";
+    // cin >> cls;
+    // bool isPossible = e->bookRoom(cls, sDate, eDate);
+    // }
+    // cout << "Booked the room! see you soon!"
 
 
     // 1 - enter customer details + order details[dates, that type of room]

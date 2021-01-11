@@ -16,4 +16,5 @@ public:
     void checkIn(int roomNumber);
     void checkOut(int roomNumber);
     void isCustomerExist(Customer *c);
+    //void bookRoom(char cls,string sDate,string eDate);
 };

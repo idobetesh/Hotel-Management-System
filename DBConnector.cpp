@@ -165,3 +165,30 @@ void DBConnector::isCustomerExist(Customer *c)
     }
     sqlite3_close(db);
 }
+
+/*void DBConnector::bookRoom(char cls,string sDate,string eDate)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT * FROM Dates WHERE idRoom = '" +  + "'AND name = '" + n + "'";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, nullptr, 0, &zErrMsg);
+        if (rc == 0)
+            addCustomer(c);
+    }
+    sqlite3_close(db);
+}
+*/
