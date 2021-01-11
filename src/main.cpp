@@ -86,6 +86,7 @@ void menu()
     cout << "if you are a manager enter password, else press *\n> ";
     cin >> pass;
     Manager *m = new Manager(1234, "ido");
+    // Employee *m = new Employee(1234, "ido_Emp");
     
     if (pass == "123")
     {

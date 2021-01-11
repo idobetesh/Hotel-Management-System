@@ -282,9 +282,10 @@ void DBConnector::generateReport()
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
 
-    string header = "### This Report generated on ";
+    string header = "*** This Report generated on ";
     string timeStr(timeStrBuf);
-    header += timeStr + " ###\n\nTotal rooms occupied: " + to_string(returnData.size() / 2) + "\nDetails:\n";
+    int occupiedRooms = returnData.size() / 2;
+    header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Details:\n";
 
     reportFile.open(title);
     reportFile << header;
@@ -295,7 +296,7 @@ void DBConnector::generateReport()
     {
         if (i % 2 == 0)
         {
-            reportContent += "\t Room No." + returnData[i] + " is occupied ";
+            reportContent += "\t- Room No." + returnData[i] + " is occupied ";
         }
         else
         {
@@ -304,7 +305,7 @@ void DBConnector::generateReport()
         }
     }
     reportFile << reportContent;
-    reportFile << "\n\nTotal Profit: " << profit << "$";
+    reportFile << "\n\n* Profit:\n\t- Total Profit: " << profit << "₪\n\t- Average profit per room: " << double(profit / occupiedRooms) << "₪";
     
     reportFile.close();
     returnData.clear();
