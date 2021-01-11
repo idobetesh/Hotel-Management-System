@@ -2,9 +2,13 @@
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
+#include <time.h>
+#include <vector>
+#include <fstream>
+#include <unordered_map>
 #include "Customer.h"
 
-#define DB "./DB/hotel-managment-system.db"
+#define DB "../DB/hotel-managment-system.db"
 
 class DBConnector
 {
@@ -17,5 +21,6 @@ public:
     void checkOut(int roomNumber);
     void isCustomerExist(Customer *c);
     void generateReport();
+    void refreshPriceMap();
     //void bookRoom(char cls,string sDate,string eDate);
 };

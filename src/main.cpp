@@ -40,6 +40,7 @@ void bookRoom(Employee *e)
 
 void getReport(Manager *m)
 {
+    m->refreshPriceMap();
     m->getReport();
 }
 
@@ -85,7 +86,7 @@ void menu()
     cout << "if you are a manager enter password, else press *\n> ";
     cin >> pass;
     Manager *m = new Manager(1234, "ido");
-
+    
     if (pass == "123")
     {
         cout << "1 - Book a room" << endl;

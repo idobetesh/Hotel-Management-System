@@ -1,0 +1,10 @@
+### This Report generated on 11-Jan-2021 at 21:34:15 ###
+
+Total rooms occupied: 3
+Details:
+	 Room No.1 is occupied | class: A
+	 Room No.5 is occupied | class: B
+	 Room No.8 is occupied | class: C
+
+
+Total Profit: 2700$

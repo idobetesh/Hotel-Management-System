@@ -1,10 +1,8 @@
 #include "DBConnector.h"
-#include <vector>
-#include <fstream>
-#include <time.h>
 
 //GLOBAL
 vector<string> returnData;
+unordered_map<string, int> priceMap;
 
 DBConnector::DBConnector() {}
 
@@ -17,6 +15,40 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
     }
     printf("\n");
     return 0;
+}
+
+void DBConnector::refreshPriceMap() // should call before getReport() from main!
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT price FROM Prices";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+
+    /* update priceMap */
+    priceMap["A"] = stoi(returnData[0]);
+    priceMap["B"] = stoi(returnData[1]);
+    priceMap["C"] = stoi(returnData[2]);
+
+    // for (auto a : priceMap)
+    //     cout << "[" << a.first << "] => " << a.second << endl;
+
+    returnData.clear();
+    sqlite3_close(db);
 }
 
 // int findPriceWithClass(string cls)
@@ -231,14 +263,13 @@ void DBConnector::generateReport()
     else
     {
         fprintf(stderr, "Opened database successfully\n");
-        string queryString = "SELECT * FROM Rooms WHERE isTaken = 1";
+        string queryString = "SELECT idRoom, class FROM Rooms WHERE isTaken = 1";
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
-    cout << "return Data: " << endl;
-    for (auto a : returnData) // => <id, isTaken, class, ...>
-        cout << a << endl;
+
+    /* reutnData vector format => <id, class, id, class, ...> */
 
     memset(timeStrBuf, 0, sizeof(timeStrBuf));
     currTime = time(NULL);
@@ -253,14 +284,28 @@ void DBConnector::generateReport()
 
     string header = "### This Report generated on ";
     string timeStr(timeStrBuf);
-    header += timeStr + " ###\n\nTotal rooms occupied: " + to_string(returnData.size() / 3) + "\nDetails:\n";
-    cout << header << endl;
+    header += timeStr + " ###\n\nTotal rooms occupied: " + to_string(returnData.size() / 2) + "\nDetails:\n";
 
     reportFile.open(title);
     reportFile << header;
-    for (auto a : returnData) // => <id, isTaken, class, ...>
-        reportFile << "writing some data to report [" << a << "] .\n";
 
+    int profit = 0;
+    string reportContent = "";
+    for (int i = 0; i < returnData.size(); i++)
+    {
+        if (i % 2 == 0)
+        {
+            reportContent += "\t Room No." + returnData[i] + " is occupied ";
+        }
+        else
+        {
+            reportContent += "| class: " + returnData[i] + "\n";
+            profit += priceMap[returnData[i]];
+        }
+    }
+    reportFile << reportContent;
+    reportFile << "\n\nTotal Profit: " << profit << "$";
+    
     reportFile.close();
     returnData.clear();
     sqlite3_close(db);
