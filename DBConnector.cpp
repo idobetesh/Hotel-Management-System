@@ -160,9 +160,8 @@ void DBConnector::isCustomerExist(Customer *c)
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, nullptr, 0, &zErrMsg);
-        if(rc == 0)
+        if (rc == 0)
             addCustomer(c);
-
     }
     sqlite3_close(db);
 }

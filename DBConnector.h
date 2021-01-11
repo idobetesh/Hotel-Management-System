@@ -3,7 +3,6 @@
 #include <sqlite3.h>
 #include <string>
 #include "Customer.h"
-using namespace std;
 
 #define DB "./DB/hotel-managment-system.db"
 

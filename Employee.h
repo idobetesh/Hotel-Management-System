@@ -14,15 +14,14 @@ protected:
     DBConnector *_db;
 
 public:
-    // Employee();
     Employee(int id, string name);
     ~Employee();
 
     string getName() { return _name; }
     void addCustomer(Customer *c);
-    // void bookRoom(int roomNumber) {}
     void checkIn(int roomNumber);
     void checkOut(int roomNumber);
     void watchAvbRooms();
     void isCustomerExist(Customer *c);
+    // void bookRoom(int roomNumber) {}
 };

@@ -11,7 +11,8 @@ void bookRoom(Employee *e)
     string n, em, p, sDate, eDate;
     cout << "Please enter the client details - " << endl;
     cout << "Name - ";
-    cin >> n;
+    fflush(stdin);
+    getline(cin, n);
     cout << "Email - ";
     cin >> em;
     cout << "Phone - ";
@@ -119,6 +120,5 @@ void menu()
 int main(void)
 {
     menu();
-    // Room *r = new Room();
     return 0;
 }
