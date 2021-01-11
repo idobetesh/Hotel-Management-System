@@ -18,7 +18,7 @@ void bookRoom(Employee *e)
     cin >> em;
     cout << "Phone - ";
     cin >> p;
-    Customer *c = new Customer(n,em,p);
+    Customer *c = new Customer(n, em, p);
     e->isCustomerExist(c); // if its not exist - creates new customer in db else does nothing
     //bool isPossible = false;
     // while(!isPossible){
@@ -32,11 +32,15 @@ void bookRoom(Employee *e)
     // }
     // cout << "Booked the room! see you soon!"
 
-
     // 1 - enter customer details + order details[dates, that type of room]
-    // 2 - check if customer already exist ? continue : create Customer 
+    // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
     // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto 3
+}
+
+void getReport(Manager *m)
+{
+    m->getFinancialReport();
 }
 
 void checkIn()
@@ -59,10 +63,10 @@ void checkOut()
 
 void watchAvbRooms(Employee *e)
 {
-     e->watchAvbRooms();
+    e->watchAvbRooms();
 }
 
-void Updateprice(Manager *e)
+void updatePrice(Manager *e)
 {
     char cls;
     int amount;
@@ -80,7 +84,7 @@ void menu()
     cout << "================ Welcome To Hotel California ================" << endl;
     cout << "if you are a manager enter password, else press *> ";
     cin >> pass;
-    Manager *e = new Manager(1234, "ido");
+    Manager *m = new Manager(1234, "ido");
 
     if (pass == "123")
     {
@@ -88,8 +92,8 @@ void menu()
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room" << endl;
         cout << "4 - Watch available rooms" << endl;
-        cout << "5 - Get financial report" << endl;
-        cout << "6 - Update prices" << endl;
+        cout << "5 - Update prices" << endl;
+        cout << "6 - Get financial report" << endl;
         cout << "0 - Exit" << endl;
     }
     else
@@ -105,7 +109,7 @@ void menu()
     switch (userInput)
     {
     case 1:
-        bookRoom(e);
+        bookRoom(m);
         break;
     case 2:
         checkIn();
@@ -113,14 +117,17 @@ void menu()
     case 3:
         checkOut();
     case 4:
-        watchAvbRooms(e);
+        watchAvbRooms(m);
         break;
     case 5:
-        Updateprice(e);    
+        updatePrice(m);
+        break;
+    case 6:
+        getReport(m);
+        break;
     default:
         break;
     }
-
 };
 
 int main(void)

@@ -9,6 +9,7 @@ class Manager : public Employee
 public:
     Manager(int id, string name);
     ~Manager();
-    void financialReport();
+
     void priceUpdater(char cls, int newPrice);
+    void getFinancialReport();
 };
