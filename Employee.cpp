@@ -5,8 +5,6 @@ Employee::Employee(int id, string name) : _id(id), _name(name)
     _db = new DBConnector();
 }
 
-// void Employee::bookRoom(int roomNumber) {}
-
 void Employee::checkIn(int roomNumber)
 {
     _db->checkIn(roomNumber);

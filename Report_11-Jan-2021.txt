@@ -1,0 +1,10 @@
+### This Report generated on 11-Jan-2021 at 19:31:42 ###
+
+Total rooms occupied: 2
+Details:
+writing some data to report [1] .
+writing some data to report [1] .
+writing some data to report [A] .
+writing some data to report [5] .
+writing some data to report [1] .
+writing some data to report [B] .

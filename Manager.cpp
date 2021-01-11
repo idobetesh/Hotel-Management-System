@@ -7,7 +7,7 @@ void Manager::priceUpdater(char cls, int newPrice)
     _db->updatePrice(cls, newPrice);
 }
 
-void Manager::getFinancialReport()
+void Manager::getReport()
 {
     _db->generateReport();
 }

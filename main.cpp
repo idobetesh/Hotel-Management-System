@@ -40,7 +40,7 @@ void bookRoom(Employee *e)
 
 void getReport(Manager *m)
 {
-    m->getFinancialReport();
+    m->getReport();
 }
 
 void checkIn()
@@ -82,7 +82,7 @@ void menu()
     string pass;
     int userInput;
     cout << "================ Welcome To Hotel California ================" << endl;
-    cout << "if you are a manager enter password, else press *> ";
+    cout << "if you are a manager enter password, else press *\n> ";
     cin >> pass;
     Manager *m = new Manager(1234, "ido");
 
@@ -94,7 +94,7 @@ void menu()
         cout << "4 - Watch available rooms" << endl;
         cout << "5 - Update prices" << endl;
         cout << "6 - Get financial report" << endl;
-        cout << "0 - Exit" << endl;
+        cout << "0 - Exit\n> ";
     }
     else
     {
@@ -103,7 +103,7 @@ void menu()
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room " << endl;
         cout << "4 - Watch available rooms" << endl;
-        cout << "0 - Exit" << endl;
+        cout << "0 - Exit\n> " << endl;
     }
     cin >> userInput;
     switch (userInput)

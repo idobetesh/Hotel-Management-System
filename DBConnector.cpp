@@ -10,7 +10,6 @@ DBConnector::DBConnector() {}
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
-    returnData.clear();
     for (int i = 0; i < argc; i++)
     {
         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -19,6 +18,35 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
     printf("\n");
     return 0;
 }
+
+// int findPriceWithClass(string cls)
+// {
+//     sqlite3 *db;
+//     char *zErrMsg = 0;
+//     int rc;
+
+//     rc = sqlite3_open(DB, &db);
+
+//     if (rc)
+//     {
+//         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+//         return 0;
+//     }
+//     else
+//     {
+//         fprintf(stderr, "Opened database successfully\n");
+//         string queryString = "SELECT price FROM Prices WHERE class = '" + cls + "'";
+//         cout << queryString << endl;
+//         const char *query = queryString.c_str();
+//         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+//     }
+//     string priceStr;
+//     priceStr = returnData[0];
+//     cout << "sdssdsdsdsdsdssdsdsdsd" << returnData[0] << endl;
+//     returnData.clear();
+//     sqlite3_close(db);
+//     return stoi(priceStr);
+// }
 
 void DBConnector::addCustomer(Customer *c)
 {
@@ -45,6 +73,7 @@ void DBConnector::addCustomer(Customer *c)
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -71,6 +100,7 @@ void DBConnector::updatePrice(char cls, int newPrice)
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -95,6 +125,7 @@ void DBConnector::watchAvbRooms()
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -119,6 +150,7 @@ void DBConnector::checkIn(int roomNumber)
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -143,6 +175,7 @@ void DBConnector::checkOut(int roomNumber)
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -171,6 +204,7 @@ void DBConnector::isCustomerExist(Customer *c)
         if (rc == 0)
             addCustomer(c);
     }
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -181,13 +215,13 @@ void DBConnector::generateReport()
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     sqlite3 *db;
+    time_t currTime;
+    ofstream reportFile;
+    struct tm *timeInfo;
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
     char timeStrBuf[32];   // DD-MMM-YYYY at HH-MM-SS
     char dateForTitle[12]; // DD/MM/YYYY
-    time_t currTime;
-    struct tm *timeInfo;
-    ofstream reportFile;
 
     if (rc)
     {
@@ -213,13 +247,13 @@ void DBConnector::generateReport()
     strftime(dateForTitle, 12, "%d-%b-%Y", timeInfo);
 
     /* generate specific title by date */
-    string title = "Financial_Report_";
+    string title = "Report_";
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
 
     string header = "### This Report generated on ";
     string timeStr(timeStrBuf);
-    header += timeStr + " ###\n\n";
+    header += timeStr + " ###\n\nTotal rooms occupied: " + to_string(returnData.size() / 3) + "\nDetails:\n";
     cout << header << endl;
 
     reportFile.open(title);
@@ -228,33 +262,11 @@ void DBConnector::generateReport()
         reportFile << "writing some data to report [" << a << "] .\n";
 
     reportFile.close();
-
+    returnData.clear();
     sqlite3_close(db);
 }
 
 /*void DBConnector::bookRoom(char cls,string sDate,string eDate)
 {
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
-
-    if (rc)
-    {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
-    }
-    else
-    {
-        fprintf(stderr, "Opened database successfully\n");
-        string queryString = "SELECT * FROM Dates WHERE idRoom = '" +  + "'AND name = '" + n + "'";
-        cout << queryString << endl;
-        const char *query = queryString.c_str();
-        rc = sqlite3_exec(db, query, nullptr, 0, &zErrMsg);
-        if (rc == 0)
-            addCustomer(c);
-    }
-    sqlite3_close(db);
 }
 */
