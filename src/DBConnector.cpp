@@ -17,7 +17,38 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
     return 0;
 }
 
-void DBConnector::refreshPriceMap() // should call before getReport() from main!
+/* void DBConnector::refreshPriceMap() 
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT price FROM Prices";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+
+    priceMap["A"] = stoi(returnData[0]);
+    priceMap["B"] = stoi(returnData[1]);
+    priceMap["C"] = stoi(returnData[2]);
+
+
+    returnData.clear();
+    sqlite3_close(db);
+} */
+
+void insideRefreshPriceMap() // should call before getReport() from main!
 {
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -44,8 +75,8 @@ void DBConnector::refreshPriceMap() // should call before getReport() from main!
     priceMap["B"] = stoi(returnData[1]);
     priceMap["C"] = stoi(returnData[2]);
 
-    // for (auto a : priceMap)
-    //     cout << "[" << a.first << "] => " << a.second << endl;
+    for (auto a : priceMap)
+        cout << "[" << a.first << "] => " << a.second << endl;
 
     returnData.clear();
     sqlite3_close(db);
@@ -134,6 +165,7 @@ void DBConnector::updatePrice(char cls, int newPrice)
     }
     returnData.clear();
     sqlite3_close(db);
+    insideRefreshPriceMap();
 }
 
 void DBConnector::watchAvbRooms()
@@ -246,6 +278,7 @@ void DBConnector::generateReport()
     ///TO DO - logics for a financial report, calculate profits, also decide what to display on such a report.///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    insideRefreshPriceMap();
     sqlite3 *db;
     time_t currTime;
     ofstream reportFile;
@@ -270,7 +303,6 @@ void DBConnector::generateReport()
     }
 
     /* reutnData vector format => <id, class, id, class, ...> */
-
     memset(timeStrBuf, 0, sizeof(timeStrBuf));
     currTime = time(NULL);
     timeInfo = localtime(&currTime);
@@ -301,7 +333,9 @@ void DBConnector::generateReport()
         else
         {
             reportContent += "| class: " + returnData[i] + "\n";
+            cout << "price: " << priceMap[returnData[i]] << endl;
             profit += priceMap[returnData[i]];
+            cout << "profit: " << profit << endl;
         }
     }
     reportFile << reportContent;

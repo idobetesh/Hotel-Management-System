@@ -1,0 +1,15 @@
+*** This Report generated on 12-Jan-2021 at 10:31:55 ***
+
+* Total rooms occupied: 5
+
+* Details:
+	- Room No.1 is occupied | class: A
+	- Room No.3 is occupied | class: A
+	- Room No.5 is occupied | class: B
+	- Room No.7 is occupied | class: B
+	- Room No.8 is occupied | class: C
+
+
+* Profit:
+	- Total Profit: 6600₪
+	- Average profit per room: 1320₪

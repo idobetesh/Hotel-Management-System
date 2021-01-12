@@ -30,10 +30,10 @@ void Employee::isCustomerExist(Customer *c)
   _db->isCustomerExist(c);
 }
 
-void Employee::refreshPriceMap()
-{
-  _db->refreshPriceMap();
-}
+// void Employee::refreshPriceMap()
+// {
+//   _db->refreshPriceMap();
+// }
 /*void Employee::bookRoom(char cls,string sDate,string eDate)
 {
   _db->bookRoom(cls,sDate,eDate);

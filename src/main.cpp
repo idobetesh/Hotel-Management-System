@@ -40,7 +40,7 @@ void bookRoom(Employee *e)
 
 void getReport(Manager *m)
 {
-    m->refreshPriceMap();
+    // m->refreshPriceMap();
     m->getReport();
 }
 
