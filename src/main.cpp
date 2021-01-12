@@ -8,8 +8,7 @@ using namespace std;
 
 void bookRoom(Employee *e)
 {
-    string n, em, p, sDate, eDate;
-    char cls;
+    string n, em, p, sDate, eDate, cls;
     cout << "Please enter the client details - " << endl;
     cout << "Name - ";
     fflush(stdin);
@@ -19,18 +18,19 @@ void bookRoom(Employee *e)
     cout << "Phone - ";
     cin >> p;
     Customer *c = new Customer(n, em, p);
-    e->isCustomerExist(c); // if its not exist - creates new customer in db else does nothing
-    //bool isPossible = false;
-    // while(!isPossible){
-    // cout << " Start date in format yyyy-mm-dd ";
-    // cin >> sDate;
-    // cout << " End date in format yyyy-mm-dd ";
-    // cin >> eDate;
-    // cout << "Enter class of room - ";
-    // cin >> cls;
-    // bool isPossible = e->bookRoom(cls, sDate, eDate);
-    // }
-    // cout << "Booked the room! see you soon!"
+    e->isCustomerExist(c); // if not exists - creates new customer in DB else does nothing
+    
+    bool isPossible = false;
+    while(!isPossible){
+    cout << " Start date in format yyyy-mm-dd ";
+    cin >> sDate;
+    cout << " End date in format yyyy-mm-dd ";
+    cin >> eDate;
+    cout << "Enter class of room - ";
+    cin >> cls;
+    bool isPossible = e->bookRoom(cls, sDate, eDate, c);
+    }
+    cout << "Booked the room! see you soon!";
 
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
@@ -71,9 +71,9 @@ void updatePrice(Manager *e)
 {
     char cls;
     int amount;
-    cout << "What is the room class you want the price to change? ";
+    cout << "What is the room class you want the price to change?\n> ";
     cin >> cls;
-    cout << "What is the new amount you want to change ?";
+    cout << "What is the new amount you want to change?\n> ";
     cin >> amount;
     e->priceUpdater(cls, amount);
 }
@@ -95,7 +95,7 @@ void menu()
         cout << "3 - Check-out room" << endl;
         cout << "4 - Watch available rooms" << endl;
         cout << "5 - Update prices" << endl;
-        cout << "6 - Get financial report" << endl;
+        cout << "6 - Get report" << endl;
         cout << "0 - Exit\n> ";
     }
     else

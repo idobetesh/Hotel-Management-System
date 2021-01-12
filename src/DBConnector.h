@@ -22,5 +22,5 @@ public:
     void isCustomerExist(Customer *c);
     void generateReport();
     void refreshPriceMap();
-    //void bookRoom(char cls,string sDate,string eDate);
+    bool bookRoom(string cls,string sDate,string eDate, Customer *c);
 };
