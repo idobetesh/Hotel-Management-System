@@ -4,6 +4,7 @@
 #include "Customer.h"
 #include "Employee.h"
 #include "Manager.h"
+#include <time.h>
 using namespace std;
 
 void bookRoom(Employee *e)
@@ -19,19 +20,19 @@ void bookRoom(Employee *e)
     cin >> p;
     Customer *c = new Customer(n, em, p);
     e->isCustomerExist(c); // if not exists - creates new customer in DB else does nothing
-    
+
     bool isPossible = false;
-    while(!isPossible){
-    cout << " Start date in format yyyy-mm-dd ";
-    cin >> sDate;
-    cout << " End date in format yyyy-mm-dd ";
-    cin >> eDate;
-    cout << "Enter class of room - ";
-    cin >> cls;
-    bool isPossible = e->bookRoom(cls, sDate, eDate, c);
+    while (!isPossible)
+    {
+        cout << "Start date in format yyyy-mm-dd\n> ";
+        cin >> sDate;
+        cout << "End date in format yyyy-mm-dd\n> ";
+        cin >> eDate;
+        cout << "Enter class of room - ";
+        cin >> cls;
+        bool isPossible = e->bookRoom(cls, sDate, eDate, c);
     }
     cout << "Booked the room! see you soon!";
-
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
@@ -47,7 +48,7 @@ void getReport(Manager *m)
 void checkIn()
 {
     int userInput;
-    cout << "Please enter the room number - ";
+    cout << "Enter room number - ";
     cin >> userInput;
     Manager *e = new Manager(1234, "ido");
     e->checkIn(userInput);
@@ -56,7 +57,7 @@ void checkIn()
 void checkOut()
 {
     int userInput;
-    cout << "Please enter the room number - ";
+    cout << "Enter room number - ";
     cin >> userInput;
     Manager *e = new Manager(1234, "ido");
     e->checkOut(userInput);
@@ -87,7 +88,7 @@ void menu()
     cin >> pass;
     Manager *m = new Manager(1234, "ido");
     // Employee *m = new Employee(1234, "ido_Emp");
-    
+
     if (pass == "123")
     {
         cout << "1 - Book a room" << endl;
@@ -134,6 +135,7 @@ void menu()
 
 int main(void)
 {
+
     menu();
     return 0;
 }
