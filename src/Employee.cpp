@@ -1,6 +1,6 @@
 #include "Employee.h"
 
-Employee::Employee(int id, string name) : _id(id), _name(name)
+Employee::Employee(string name) : _name(name)
 {
   _db = new DBConnector();
 }
@@ -36,5 +36,5 @@ void Employee::isCustomerExist(Customer *c)
 // }
 bool Employee::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
-  _db->bookRoom(cls, sDate, eDate, c);
+  return _db->bookRoom(cls, sDate, eDate, c);
 }

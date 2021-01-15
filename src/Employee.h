@@ -7,14 +7,13 @@ using namespace std;
 class Employee
 {
 private:
-    int _id;
     string _name;
 
 protected:
     DBConnector *_db;
 
 public:
-    Employee(int id, string name);
+    Employee(string name);
     ~Employee();
 
     string getName() { return _name; }

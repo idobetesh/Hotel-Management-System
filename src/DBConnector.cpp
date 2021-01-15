@@ -1,6 +1,7 @@
 #include "DBConnector.h"
+using namespace std;
 
-//GLOBAL
+/* GLOBAL */
 vector<string> returnData;
 vector<int> returnedRooms;
 int customerID = 0;
@@ -133,6 +134,36 @@ void insideRefreshPriceMap() // should call before getReport() from main!
     sqlite3_close(db);
 }
 
+void refreshOrders()
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    time_t currTime;
+    struct tm *timeInfo;
+    char today[12]; // YYYY-MM-DD
+    currTime = time(NULL);
+    timeInfo = localtime(&currTime);
+    strftime(today, 12, "%Y-%m-%d", timeInfo);
+    string todayStr(today);
+
+    int rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "DELETE FROM Dates WHERE departureDate < '" + todayStr + "'";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+        sqlite3_close(db);
+    }
+}
+
 void DBConnector::addCustomer(Customer *c)
 {
     sqlite3 *db;
@@ -212,6 +243,7 @@ void DBConnector::watchAvbRooms()
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
     }
     returnData.clear();
+    refreshOrders();
     sqlite3_close(db);
 }
 
@@ -288,7 +320,8 @@ void DBConnector::isCustomerExist(Customer *c)
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
-        if (customerID == -1){
+        if (customerID == -1)
+        {
             cout << "I've added the customer sir!" << endl;
             addCustomer(c);
         }
@@ -307,7 +340,7 @@ void DBConnector::generateReport()
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
     char timeStrBuf[32];   // DD-MMM-YYYY at HH-MM-SS
-    char dateForTitle[12]; // DD/MM/YYYY
+    char dateForTitle[12]; // DD-MMM-YYYY
 
     if (rc)
     {
@@ -316,6 +349,7 @@ void DBConnector::generateReport()
     }
     else
     {
+        returnData.clear();
         fprintf(stderr, "Opened database successfully\n");
         string queryString = "SELECT idRoom, class FROM Rooms WHERE isTaken = 1";
         cout << queryString << endl;
@@ -329,6 +363,12 @@ void DBConnector::generateReport()
     timeInfo = localtime(&currTime);
     strftime(timeStrBuf, 32, "%d-%b-%Y at %H:%M:%S", timeInfo);
     strftime(dateForTitle, 12, "%d-%b-%Y", timeInfo);
+    char firstDayOfMonth[12];
+    strftime(firstDayOfMonth, 12, "%Y-%m-01", timeInfo); // YYYY-MM-01
+    string firstDayOfMonthStr(firstDayOfMonth);
+    char lastDayOfMonth[12];
+    strftime(lastDayOfMonth, 12, "%Y-%m-30", timeInfo); // YYYY-MM-30
+    string lastDayOfMonthStr(lastDayOfMonth);
 
     /* generate unique title by date */
     string title = "Report_";
@@ -338,7 +378,7 @@ void DBConnector::generateReport()
     string header = "*** This Report generated on ";
     string timeStr(timeStrBuf);
     int occupiedRooms = returnData.size() / 2;
-    header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Details:\n";
+    header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Current rooms occupied:\n";
 
     reportFile.open(title);
     reportFile << header;
@@ -361,10 +401,45 @@ void DBConnector::generateReport()
     }
     reportFile << reportContent;
     reportFile << "\n\n* Profit:\n\t- Total Profit: " << profit << "₪\n\t- Average profit per room: " << double(profit / occupiedRooms) << "₪";
-
-    reportFile.close();
+    refreshOrders();
     returnData.clear();
     sqlite3_close(db);
+
+    rc = sqlite3_open(DB, &db);
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT arrivalDate, departureDate, idRoom FROM Dates WHERE departureDate BETWEEN '" + firstDayOfMonthStr + "' AND '" + lastDayOfMonthStr + "'";        
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+        sqlite3_close(db);
+    }
+
+    reportFile << "\n\n* Total Future Orders: "<< returnData.size() / 3 << "\n\n* Future Orders Details:\n";
+    string futureOrd = "";
+    for (int i = 0; i < returnData.size(); i++) // <sDate, eDate, idRoom>
+    {
+        if (i % 3 == 0) //sDate
+        {
+            futureOrd += "\t- From " + returnData[i];
+        }
+        if (i % 3 == 1) //eDate
+        {
+            futureOrd += " To " + returnData[i];
+        }
+        if (i % 3 == 2) //idRoom
+        {
+            futureOrd += " | Room No. " + returnData[i] + "\n";
+        }
+    }
+    reportFile << futureOrd;
+    reportFile.close();
 }
 
 bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
@@ -406,7 +481,7 @@ bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
                 int diffInDays = datesDiff(sDate, eDate);
                 returnData.clear();
                 insideRefreshPriceMap();
-                cout << priceMap[cls] << ", " << diffInDays<< endl;
+                cout << priceMap[cls] << ", " << diffInDays << endl;
                 int totalPrice = priceMap[cls] * (diffInDays - 1);
                 queryString = "SELECT idCustomer FROM Customers WHERE name = '" + c->getName() + "' AND email = '" + c->getEmail() + "'";
                 query = queryString.c_str();
@@ -436,9 +511,48 @@ bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
             returnData.clear();
             sqlite3_close(db);
         }
-        cout << "There are no available rooms in these dates :(,\nplease try different dates or other room class, Good luck!" << endl;
+        cout << "There are no available rooms in these dates :(\nplease try different dates or other room class, Good luck!" << endl;
         returnedRooms.clear();
         return false;
     }
     sqlite3_close(db);
+}
+
+int DBConnector::authenticate(string name, string pass)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return 0;
+    }
+    else
+    {
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT isManager FROM Users WHERE name = '" + name + "' AND pass = '" + pass + "'";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        customerID = -1;
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+        sqlite3_close(db);
+        if (customerID == -1)
+        {
+            return 0;
+        }
+        if (customerID == 0)
+        {
+            customerID = 0;
+            return 1;
+        }
+        else
+        {
+            customerID = 0;
+            return 2;
+        }
+    }
 }

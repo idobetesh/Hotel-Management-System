@@ -1,6 +1,6 @@
 #include "Manager.h"
 
-Manager::Manager(int id, string name) : Employee(id, name) {}
+Manager::Manager(string name) : Employee(name) {}
 
 void Manager::priceUpdater(char cls, int newPrice)
 {

@@ -4,7 +4,7 @@
 class Manager : public Employee
 {
 public:
-    Manager(int id, string name);
+    Manager(string name);
     ~Manager();
 
     void priceUpdater(char cls, int newPrice);

@@ -23,4 +23,5 @@ public:
     void generateReport();
     void refreshPriceMap();
     bool bookRoom(string cls,string sDate,string eDate, Customer *c);
+    int authenticate(string name,string pass);
 };

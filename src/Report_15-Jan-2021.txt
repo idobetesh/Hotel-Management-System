@@ -1,0 +1,24 @@
+*** This Report generated on 15-Jan-2021 at 18:24:50 ***
+
+* Total rooms occupied: 4
+
+* Current rooms occupied:
+	- Room No.1 is occupied | class: A
+	- Room No.5 is occupied | class: B
+	- Room No.7 is occupied | class: B
+	- Room No.8 is occupied | class: C
+
+
+* Profit:
+	- Total Profit: 4100₪
+	- Average profit per room: 1025₪
+
+* Total Future Orders: 6
+
+* Future Orders Details:
+	- From 2021-01-15 To 2021-01-17 | Room No. 1
+	- From 2021-01-24 To 2021-01-19 | Room No. 2
+	- From 2021-01-16 To 2021-01-19 | Room No. 1
+	- From 2021-01-15 To 2021-01-17 | Room No. 2
+	- From 2021-01-16 To 2021-01-18 | Room No. 1
+	- From 2021-01-16 To 2021-01-18 | Room No. 3
