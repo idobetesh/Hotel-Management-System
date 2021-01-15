@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include "Customer.h"
 
-#define DB "../DB/hotel-managment-system.db"
+#define DB "../DB/hotel-management-system.db"
 
 class DBConnector
 {

@@ -2,7 +2,7 @@
 
 void Menu::start()
 {
-    while(true)
+    while (true)
     {
         string name, pass;
         cout << "================ Welcome To Hotel California ================" << endl;
@@ -11,25 +11,29 @@ void Menu::start()
         cout << "Enter password: ";
         cin >> pass;
         int status = _db->authenticate(name, pass);
-        switch (status) 
+        switch (status)
         {
-            case 0: 
-                cout << "Bad input! '" << name << "' was NOT found" << endl;
-                break;
-            case 1:
-                _e = new Employee(name);
-                employeeMenu(); 
-                break;
-            case 2:
-                _m = new Manager(name);
-                this->manager = 1;
-                managerMenu();
-                break;
+        case 0:
+            cout << "Bad input! '" << name << "' was NOT found" << endl;
+            break;
+        case 1:
+            _e = new Employee(name);
+            employeeMenu();
+            break;
+        case 2:
+            _m = new Manager(name);
+            this->manager = 1;
+            managerMenu();
+            break;
         }
-        if(_m || _e) {break;}
+
+        if (_m || _e)
+        {
+            break;
+        }
     }
 }
-        
+
 void Menu::employeeMenu()
 {
     int userInput = -1;
@@ -47,6 +51,9 @@ void Menu::employeeMenu()
 
         switch (userInput)
         {
+        case 0:
+            cout << "Have a great day!";
+            break;
         case 1:
             bookRoom();
             break;
@@ -78,12 +85,14 @@ void Menu::bookRoom()
     cout << "Phone - ";
     cin >> phone;
     Customer *c = new Customer(name, email, phone);
-    if(this->manager){
+    if (this->manager)
+    {
         _m->isCustomerExist(c); // if not exists - creates new customer in DB else does nothing
-    } else {
+    }
+    else
+    {
         _e->isCustomerExist(c); // if not exists - creates new customer in DB else does nothing
     }
-    
 
     bool isPossible = false;
     while (!isPossible)
@@ -94,10 +103,13 @@ void Menu::bookRoom()
         cin >> eDate;
         cout << "Enter class of room - ";
         cin >> cls;
-        if (this->manager){
+        if (this->manager)
+        {
             isPossible = _m->bookRoom(cls, sDate, eDate, c);
             cout << isPossible << endl;
-        } else {
+        }
+        else
+        {
             isPossible = _e->bookRoom(cls, sDate, eDate, c);
             cout << isPossible << endl;
         }
@@ -111,7 +123,6 @@ void Menu::bookRoom()
 
 void Menu::getReport()
 {
-    // m->refreshPriceMap();
     this->_m->getReport();
 }
 
@@ -120,12 +131,14 @@ void Menu::checkIn()
     int userInput;
     cout << "Enter room number - ";
     cin >> userInput;
-    if(this->manager){
+    if (this->manager)
+    {
         this->_m->checkIn(userInput);
-    } else {
+    }
+    else
+    {
         this->_e->checkIn(userInput);
     }
-    
 }
 
 void Menu::checkOut()
@@ -133,21 +146,26 @@ void Menu::checkOut()
     int userInput;
     cout << "Enter room number - ";
     cin >> userInput;
-    if(this->manager){
+    if (this->manager)
+    {
         this->_m->checkOut(userInput);
-    } else {
+    }
+    else
+    {
         this->_e->checkOut(userInput);
     }
 }
 
 void Menu::watchAvbRooms()
 {
-    if(this->manager){
+    if (this->manager)
+    {
         this->_m->watchAvbRooms();
-    } else {
+    }
+    else
+    {
         this->_e->watchAvbRooms();
     }
-    
 }
 
 void Menu::updatePrice()
@@ -165,7 +183,7 @@ void Menu::managerMenu()
 {
     int userInput = -1;
     while (userInput != 0)
-    {            
+    {
         cout << "Welcome " << _m->getName() << endl;
         cout << "1 - Book a room" << endl;
         cout << "2 - Check-in room" << endl;
@@ -177,6 +195,9 @@ void Menu::managerMenu()
         cin >> userInput;
         switch (userInput)
         {
+        case 0:
+            cout << "Have a great day!";
+            break;
         case 1:
             this->bookRoom();
             break;
