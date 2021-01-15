@@ -330,7 +330,7 @@ void DBConnector::generateReport()
     strftime(timeStrBuf, 32, "%d-%b-%Y at %H:%M:%S", timeInfo);
     strftime(dateForTitle, 12, "%d-%b-%Y", timeInfo);
 
-    /* generate specific title by date */
+    /* generate unique title by date */
     string title = "Report_";
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
