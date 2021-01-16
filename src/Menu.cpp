@@ -73,10 +73,12 @@ void Menu::employeeMenu()
     }
 }
 
+bool isValidClass(string cls) { return (cls == "A" || cls == "B" || cls == "C"); }
+
 void Menu::bookRoom()
 {
     string name, email, phone, sDate, eDate, cls;
-    cout << "Please enter the client details - " << endl;
+    cout << "Please enter customer details - " << endl;
     cout << "Name - ";
     fflush(stdin);
     getline(cin, name);
@@ -101,20 +103,23 @@ void Menu::bookRoom()
         cin >> sDate;
         cout << "End date in format yyyy-mm-dd\n> ";
         cin >> eDate;
-        cout << "Enter class of room - ";
+        cout << "Enter room class - ";
         cin >> cls;
+        if(!isValidClass(cls)) // valid class ? cls : "C"
+            cls = "C";
+
         if (this->manager)
         {
-            isPossible = _m->bookRoom(cls, sDate, eDate, c);
-            cout << isPossible << endl;
+            isPossible = _m->bookRoom(cls, sDate, eDate, c); // should return room number when possible else 0
+            cout << isPossible << endl; // delete
         }
         else
         {
             isPossible = _e->bookRoom(cls, sDate, eDate, c);
-            cout << isPossible << endl;
+            cout << isPossible << endl; // delete
         }
     }
-    cout << "Room is booked! see you soon!";
+    cout << "Room No." << "NUMBER_FROM_DB" << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
@@ -124,6 +129,13 @@ void Menu::bookRoom()
 void Menu::getReport()
 {
     this->_m->getReport();
+}
+
+void Menu::priceList()
+{
+    string pricesString = "============ Room Prices ============";
+    pricesString += this->_m->getPrices();
+    cout << pricesString;
 }
 
 void Menu::checkIn()
@@ -168,15 +180,27 @@ void Menu::watchAvbRooms()
     }
 }
 
-void Menu::updatePrice()
+void Menu::updatePrice() // manager enter price -> new price lower than the current one ? mail customers : none
 {
-    char cls;
-    int amount;
-    cout << "What is the room class you want the price to change?\n> ";
-    cin >> cls;
-    cout << "What is the new amount you want to change?\n> ";
-    cin >> amount;
-    _m->priceUpdater(cls, amount);
+    string cls;
+    int newPrice;
+    bool validCls = false;
+
+    cout << "For which class would you like to change the price?\n> ";
+    while (!validCls)
+    {
+        cin >> cls;
+        validCls = isValidClass(cls);
+        if(!validCls)
+            cout << "Class '" << cls << "' was NOT found, try again\n> ";
+    }
+
+    cout << "Enter new price - ";
+    cin >> newPrice;
+    if (newPrice < 200) // 'last price!'
+        newPrice = 200;
+
+    _m->priceUpdater(cls, newPrice);
 }
 
 void Menu::managerMenu()
@@ -191,6 +215,7 @@ void Menu::managerMenu()
         cout << "4 - Watch available rooms" << endl;
         cout << "5 - Update prices" << endl;
         cout << "6 - Get report" << endl;
+        cout << "7 - Price List" << endl;
         cout << "0 - Exit\n> ";
         cin >> userInput;
         switch (userInput)
@@ -215,6 +240,9 @@ void Menu::managerMenu()
             break;
         case 6:
             this->getReport();
+            break;
+        case 7:
+            this->priceList();
             break;
         default:
             cout << "invalid input '" << userInput << "', try again" << endl;

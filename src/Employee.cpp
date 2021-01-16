@@ -30,11 +30,13 @@ void Employee::isCustomerExist(Customer *c)
   _db->isCustomerExist(c);
 }
 
-// void Employee::refreshPriceMap()
-// {
-//   _db->refreshPriceMap();
-// }
+
 bool Employee::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
   return _db->bookRoom(cls, sDate, eDate, c);
+}
+
+string Employee::getPrices()
+{
+    return _db->getPricesString();
 }

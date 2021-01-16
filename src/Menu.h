@@ -5,8 +5,6 @@
 #include "DBConnector.h"
 #include "Manager.h"
 using namespace std;
-
-
 class Menu
 {
 private:
@@ -17,6 +15,7 @@ private:
 
 public:
     Menu(){};
+    ~Menu();
     void start();
     void bookRoom();
     void getReport();
@@ -26,4 +25,5 @@ public:
     void updatePrice();
     void employeeMenu();
     void managerMenu();
+    void priceList();
 };

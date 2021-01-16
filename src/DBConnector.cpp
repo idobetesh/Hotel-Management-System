@@ -6,7 +6,8 @@ vector<string> returnData;
 vector<int> returnedRooms;
 int customerID = 0;
 int orderID = 0;
-unordered_map<string, int> priceMap;
+// unordered_map<string, int> priceMap;
+map<string, int> priceMap; // keeps the classes sorted
 
 DBConnector::DBConnector() {}
 
@@ -193,13 +194,11 @@ void DBConnector::addCustomer(Customer *c)
     sqlite3_close(db);
 }
 
-void DBConnector::updatePrice(char cls, int newPrice)
+void DBConnector::updatePrice(string cls, int newPrice)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
-
-    string cls_str = string(1, cls);
 
     rc = sqlite3_open(DB, &db);
 
@@ -211,7 +210,7 @@ void DBConnector::updatePrice(char cls, int newPrice)
     else
     {
         fprintf(stderr, "Opened database successfully\n");
-        string queryString = "UPDATE Prices SET class = '" + cls_str + "', price = " + to_string(newPrice) + " WHERE class = '" + cls_str + "'";
+        string queryString = "UPDATE Prices SET class = '" + cls + "', price = " + to_string(newPrice) + " WHERE class = '" + cls + "'";
         cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
@@ -375,7 +374,7 @@ void DBConnector::generateReport()
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
 
-    string header = "*** This Report generated on ";
+    string header = "*** This report generated on ";
     string timeStr(timeStrBuf);
     int occupiedRooms = returnData.size() / 2;
     header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Current rooms occupied:\n";
@@ -438,7 +437,8 @@ void DBConnector::generateReport()
             futureOrd += " | Room No. " + returnData[i] + "\n";
         }
     }
-    reportFile << futureOrd;
+    reportFile << futureOrd << "\n\n* Current Room Prices:" << getPricesString();
+
     reportFile.close();
 }
 
@@ -516,6 +516,16 @@ bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
         return false;
     }
     sqlite3_close(db);
+}
+
+string DBConnector::getPricesString()
+{
+    insideRefreshPriceMap();
+    string pricesString = "";
+    pricesString +=  "\n- Class - 'A' | " + to_string(priceMap["A"]) + "₪ per night." + 
+                     "\n- Class - 'B' | " + to_string(priceMap["B"]) + "₪ per night." +
+                     "\n- Class - 'A' | " + to_string(priceMap["C"]) + "₪ per night.\n";
+    return pricesString;
 }
 
 int DBConnector::authenticate(string name, string pass)

@@ -7,6 +7,6 @@ public:
     Manager(string name);
     ~Manager();
 
-    void priceUpdater(char cls, int newPrice);
+    void priceUpdater(string cls, int newPrice);
     void getReport();
 };

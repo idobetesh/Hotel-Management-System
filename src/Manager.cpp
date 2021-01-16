@@ -2,7 +2,7 @@
 
 Manager::Manager(string name) : Employee(name) {}
 
-void Manager::priceUpdater(char cls, int newPrice)
+void Manager::priceUpdater(string cls, int newPrice)
 {
     _db->updatePrice(cls, newPrice);
 }

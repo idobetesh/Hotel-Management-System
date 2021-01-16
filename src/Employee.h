@@ -22,6 +22,6 @@ public:
     void checkOut(int roomNumber);
     void watchAvbRooms();
     void isCustomerExist(Customer *c);
-    // void refreshPriceMap();
     bool bookRoom(string cls,string sDate,string eDate, Customer *c);
+    string getPrices();
 };
