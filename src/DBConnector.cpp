@@ -6,8 +6,7 @@ vector<string> returnData;
 vector<int> returnedRooms;
 int customerID = 0;
 int orderID = 0;
-// unordered_map<string, int> priceMap;
-map<string, int> priceMap; // keeps the classes sorted
+unordered_map<string, int> priceMap;
 
 DBConnector::DBConnector() {}
 
@@ -117,6 +116,7 @@ void insideRefreshPriceMap() // should call before getReport() from main!
     else
     {
         fprintf(stderr, "Opened database successfully\n");
+        returnData.clear();
         string queryString = "SELECT price FROM Prices";
         cout << queryString << endl;
         const char *query = queryString.c_str();
@@ -124,14 +124,11 @@ void insideRefreshPriceMap() // should call before getReport() from main!
     }
 
     /* update priceMap */
-    cout << "Checking what is in returned data - " << returnData[0] << endl;
-    cout << "Checking what is in returned data - " << returnData[1] << endl;
-    cout << "Checking what is in returned data - " << returnData[2] << endl;
     priceMap["A"] = stoi(returnData[0]);
     priceMap["B"] = stoi(returnData[1]);
     priceMap["C"] = stoi(returnData[2]);
 
-    //returnData.clear();
+    returnData.clear();
     sqlite3_close(db);
 }
 
@@ -194,18 +191,18 @@ void DBConnector::addCustomer(Customer *c)
     sqlite3_close(db);
 }
 
-void DBConnector::updatePrice(string cls, int newPrice)
+int DBConnector::updatePrice(string cls, int newPrice)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
+    insideRefreshPriceMap();
+    int currPrice = priceMap[cls];
 
     if (rc)
     {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
+        return 0;
     }
     else
     {
@@ -218,6 +215,8 @@ void DBConnector::updatePrice(string cls, int newPrice)
     returnData.clear();
     sqlite3_close(db);
     insideRefreshPriceMap();
+
+    return currPrice - newPrice;
 }
 
 void DBConnector::watchAvbRooms()
@@ -442,7 +441,7 @@ void DBConnector::generateReport()
     reportFile.close();
 }
 
-bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
+int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -472,6 +471,7 @@ bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
             cout << queryString << endl;
             query = queryString.c_str();
             rc = sqlite3_exec(db, query, tmpcallback, 0, &zErrMsg);
+
             if (returnData.size() == 0)
             {
                 returnedRooms.clear();
@@ -505,15 +505,15 @@ bool DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
                 query = queryString.c_str();
                 rc = sqlite3_exec(db, query, callbackOrderID, 0, &zErrMsg);
                 sqlite3_close(db);
-                cout << "Order was booked! \nEnjoy your future stay with us!" << endl;
-                return true;
+                // cout << "Order was booked! \nEnjoy your future stay with us!" << endl;
+                return returnedRooms[i];
             }
             returnData.clear();
             sqlite3_close(db);
         }
         cout << "There are no available rooms in these dates :(\nplease try different dates or other room class, Good luck!" << endl;
         returnedRooms.clear();
-        return false;
+        return 0;
     }
     sqlite3_close(db);
 }
@@ -565,4 +565,62 @@ int DBConnector::authenticate(string name, string pass)
             return 2;
         }
     }
+}
+
+void DBConnector::notify(string cls, int priceDiff, int newPrice)
+{
+    sqlite3 *db;
+    time_t currTime;
+    ofstream emailCopyFile;
+    struct tm *timeInfo;
+    char *zErrMsg = 0;
+    int rc = sqlite3_open(DB, &db);
+    char dateForTitle[12]; // DD-MMM-YYYY
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        returnData.clear();
+        fprintf(stderr, "Opened database successfully\n");
+        string queryString = "SELECT name, email FROM Customers";
+        cout << queryString << endl;
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+    }
+
+    cout << "You are in the notify func before the time was announced"<< endl;
+    /* returnData vector format => <name, email, ...> */
+    currTime = time(NULL);
+    timeInfo = localtime(&currTime);
+    strftime(dateForTitle, 12, "%d-%b-%Y", timeInfo);
+
+    /* generate unique title by date */
+    string title = "NotifyEmailCopy_";
+    string dateForTitleStr(dateForTitle);
+    title += dateForTitleStr + ".txt";
+    
+    double precentOff = (1 - (double(newPrice) / double(priceDiff + newPrice))) * 100;
+    string precentOffStr = to_string(precentOff);
+    // precentOffStr.substr(0, 5) 25.7892 -> 25.78
+    string header = "*** Don't Miss This One! ***\n\n";
+    cout << "This is the file name that should be calles " << title << endl;
+    emailCopyFile.open(title);
+    emailCopyFile << header;
+    emailCopyFile << "All our rooms from class '" << cls << "' are now on " << precentOffStr.substr(0, 5) << "% OFF!!!\n\nStay Safe,\nHotel California 🏖🌅\n\n\n\n\n*This email was send to " << to_string(returnData.size()/2) << " customers:\n";
+    for (int i = 0 ;i < returnData.size(); i++)
+    {
+        if(i % 2 == 0)
+        {
+            emailCopyFile << "\tName: '"<< returnData[i] << "' will receive email to address - '";
+        }
+        else
+        {
+           emailCopyFile << returnData[i] << "'\n";
+        } 
+    }
+    emailCopyFile.close();
 }

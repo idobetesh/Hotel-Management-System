@@ -2,9 +2,9 @@
 
 void Menu::start()
 {
+    string name, pass;
     while (true)
     {
-        string name, pass;
         cout << "================ Welcome To Hotel California ================" << endl;
         cout << "Enter username: ";
         cin >> name;
@@ -52,7 +52,7 @@ void Menu::employeeMenu()
         switch (userInput)
         {
         case 0:
-            cout << "Have a great day!";
+            cout << _e->getName() << ", have a great day!";
             break;
         case 1:
             bookRoom();
@@ -77,6 +77,11 @@ bool isValidClass(string cls) { return (cls == "A" || cls == "B" || cls == "C");
 
 void Menu::bookRoom()
 {
+    // 1 - enter customer details + order details[dates, that type of room]
+    // 2 - check if customer already exist ? continue : create Customer
+    // 3 - check availability of the room
+    // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto 3
+
     string name, email, phone, sDate, eDate, cls;
     cout << "Please enter customer details - " << endl;
     cout << "Name - ";
@@ -96,34 +101,34 @@ void Menu::bookRoom()
         _e->isCustomerExist(c); // if not exists - creates new customer in DB else does nothing
     }
 
-    bool isPossible = false;
-    while (!isPossible)
+    int bookedRoom = 0;
+    while (bookedRoom == 0)
     {
         cout << "Start date in format yyyy-mm-dd\n> ";
         cin >> sDate;
         cout << "End date in format yyyy-mm-dd\n> ";
         cin >> eDate;
-        cout << "Enter room class - ";
-        cin >> cls;
-        if(!isValidClass(cls)) // valid class ? cls : "C"
-            cls = "C";
+
+        bool validCls = false;
+        while (!validCls)
+        {
+            cout << "Enter room class - ";
+            cin >> cls;
+            validCls = isValidClass(cls);
+            if (!validCls)
+                cout << "Class '" << cls << "' was NOT found, try again\n> ";
+        }
 
         if (this->manager)
         {
-            isPossible = _m->bookRoom(cls, sDate, eDate, c); // should return room number when possible else 0
-            cout << isPossible << endl; // delete
+            bookedRoom = _m->bookRoom(cls, sDate, eDate, c); // should return room number when possible else 0
         }
         else
         {
-            isPossible = _e->bookRoom(cls, sDate, eDate, c);
-            cout << isPossible << endl; // delete
+            bookedRoom = _e->bookRoom(cls, sDate, eDate, c);
         }
     }
-    cout << "Room No." << "NUMBER_FROM_DB" << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
-    // 1 - enter customer details + order details[dates, that type of room]
-    // 2 - check if customer already exist ? continue : create Customer
-    // 3 - check availability of the room
-    // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto 3
+    cout << "Room No." << to_string(bookedRoom) << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
 }
 
 void Menu::getReport()
@@ -185,13 +190,14 @@ void Menu::updatePrice() // manager enter price -> new price lower than the curr
     string cls;
     int newPrice;
     bool validCls = false;
+    int isLowerPrice = 0;
 
     cout << "For which class would you like to change the price?\n> ";
     while (!validCls)
     {
         cin >> cls;
         validCls = isValidClass(cls);
-        if(!validCls)
+        if (!validCls)
             cout << "Class '" << cls << "' was NOT found, try again\n> ";
     }
 
@@ -200,7 +206,14 @@ void Menu::updatePrice() // manager enter price -> new price lower than the curr
     if (newPrice < 200) // 'last price!'
         newPrice = 200;
 
-    _m->priceUpdater(cls, newPrice);
+    isLowerPrice = _m->priceUpdater(cls, newPrice); // returns currPrice - newPrice
+    cout << "The diff is " << isLowerPrice << endl;
+    if (isLowerPrice > 0) // newPrice is LOWER than currPrice!
+    {
+        cout << "Your are about to get in the notify func! " << endl;
+        // notify all customers about the new *lower* price
+        _db->notify(cls, isLowerPrice, newPrice); // currPrice = isLowerPrice + newPrice
+    }
 }
 
 void Menu::managerMenu()
@@ -221,7 +234,7 @@ void Menu::managerMenu()
         switch (userInput)
         {
         case 0:
-            cout << "Have a great day!";
+            cout << _m->getName() << ", have a great day!";
             break;
         case 1:
             this->bookRoom();

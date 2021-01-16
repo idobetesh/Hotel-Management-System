@@ -31,7 +31,7 @@ void Employee::isCustomerExist(Customer *c)
 }
 
 
-bool Employee::bookRoom(string cls, string sDate, string eDate, Customer *c)
+int Employee::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
   return _db->bookRoom(cls, sDate, eDate, c);
 }
