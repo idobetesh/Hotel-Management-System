@@ -14,7 +14,7 @@ void Menu::start()
         switch (status)
         {
         case 0:
-            cout << "Bad input! '" << name << "' was NOT found" << endl;
+            cout << "Username or password is incorrect, try again"<< endl;
             break;
         case 1:
             _e = new Employee(name);
@@ -45,7 +45,7 @@ void Menu::employeeMenu()
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room " << endl;
         cout << "4 - Watch available rooms" << endl;
-        cout << "0 - Exit\n> " << endl;
+        cout << "0 - Exit\n> ";
 
         cin >> userInput;
 
