@@ -10,6 +10,8 @@ unordered_map<string, int> priceMap;
 
 DBConnector::DBConnector() {}
 
+/* ---------------------------------------------- Callback-Functions ---------------------------------------------- */
+
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
     for (int i = 0; i < argc; i++)
@@ -73,6 +75,8 @@ static int callbackOrderID(void *NotUsed, int argc, char **argv, char **azColNam
     }
     return 0;
 }
+
+/* ---------------------------------------------- Internal-Usage-Functions ---------------------------------------------- */
 
 int datesDiff(string date_s, string date_e)
 {
@@ -171,6 +175,8 @@ void refreshOrders()
         sqlite3_close(db);
     }
 }
+
+/* ---------------------------------------------- Database-Access-Functions ---------------------------------------------- */
 
 void DBConnector::addCustomer(Customer *c)
 {
@@ -382,7 +388,7 @@ void DBConnector::generateReport()
     string dateForTitleStr(dateForTitle);
     title += dateForTitleStr + ".txt";
 
-    string header = "*** This report generated on ";
+    string header = "*** This report created on ";
     string timeStr(timeStrBuf);
     int occupiedRooms = returnData.size() / 2;
     header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Current rooms occupied:\n";
@@ -447,7 +453,7 @@ void DBConnector::generateReport()
     }
     reportFile << futureOrd << "\n\n* Current Room Prices:" << getPricesString();
 
-    cout << "New report '" << title << "' has generated in 'Reports' folder" << endl;
+    cout << "New report '" << title << "' has created in 'Reports' folder" << endl;
     reportFile.close();
 }
 
