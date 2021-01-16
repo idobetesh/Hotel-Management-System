@@ -1,4 +1,4 @@
-*** This report generated on 16-Jan-2021 at 10:15:41 ***
+*** This report generated on 16-Jan-2021 at 12:42:43 ***
 
 * Total rooms occupied: 4
 
@@ -10,8 +10,8 @@
 
 
 * Profit:
-	- Total Profit: 3800₪
-	- Average profit per room: 950₪
+	- Total Profit: 3600₪
+	- Average profit per room: 900₪
 
 * Total Future Orders: 6
 
@@ -25,6 +25,6 @@
 
 
 * Current Room Prices:
-- Class - 'A' | 2200₪ per night.
+- Class - 'A' | 2000₪ per night.
 - Class - 'B' | 700₪ per night.
 - Class - 'A' | 200₪ per night.

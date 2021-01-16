@@ -378,7 +378,7 @@ void DBConnector::generateReport()
     int occupiedRooms = returnData.size() / 2;
     header += timeStr + " ***\n\n* Total rooms occupied: " + to_string(occupiedRooms) + "\n\n* Current rooms occupied:\n";
 
-    reportFile.open(title);
+    reportFile.open("./Reports/" + title);
     reportFile << header;
 
     int profit = 0;
@@ -608,7 +608,7 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
     // precentOffStr.substr(0, 5) 25.7892 -> 25.78
     string header = "*** Don't Miss This One! ***\n\n";
     cout << "This is the file name that should be calles " << title << endl;
-    emailCopyFile.open(title);
+    emailCopyFile.open("./Emails/" + title);
     emailCopyFile << header;
     emailCopyFile << "All our rooms from class '" << cls << "' are now on " << precentOffStr.substr(0, 5) << "% OFF!!!\n\nStay Safe,\nHotel California 🏖🌅\n\n\n\n\n*This email was send to " << to_string(returnData.size()/2) << " customers:\n";
     for (int i = 0 ;i < returnData.size(); i++)
