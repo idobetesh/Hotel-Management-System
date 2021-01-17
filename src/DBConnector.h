@@ -7,6 +7,7 @@
 #include <fstream>
 #include <unordered_map>
 #include "Customer.h"
+using namespace std;
 
 #define DB "../DB/hotel-management-system.db"
 class DBConnector

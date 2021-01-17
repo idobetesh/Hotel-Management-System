@@ -1,5 +1,4 @@
 #include "DBConnector.h"
-using namespace std;
 
 /* GLOBAL */
 vector<string> returnData;
@@ -80,7 +79,7 @@ static int callbackOrderID(void *NotUsed, int argc, char **argv, char **azColNam
 
 int datesDiff(string date_s, string date_e)
 {
-    //  YYYY-MM-DD
+    // YYYY-MM-DD
     int year_e = stoi(date_s.substr(0, 4));
     int year_s = stoi(date_e.substr(0, 4));
     int month_s = stoi(date_s.substr(5, 2));
@@ -238,9 +237,7 @@ void DBConnector::watchAvbRooms()
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -264,9 +261,7 @@ void DBConnector::checkIn(int roomNumber)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -289,9 +284,7 @@ void DBConnector::checkOut(int roomNumber)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -314,12 +307,11 @@ void DBConnector::isCustomerExist(Customer *c)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
+    int rc = sqlite3_open(DB, &db);
 
     string n = c->getName();
     string e = c->getEmail();
-    rc = sqlite3_open(DB, &db);
-
+    
     if (rc)
     {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -461,9 +453,7 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -548,9 +538,7 @@ int DBConnector::authenticate(string name, string pass)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(DB, &db);
+    int rc = sqlite3_open(DB, &db);
 
     if (rc)
     {
@@ -638,5 +626,6 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
            emailCopyFile << returnData[i] << "'\n";
         } 
     }
+    returnData.clear();
     emailCopyFile.close();
 }

@@ -10,9 +10,14 @@ void Menu::start()
         cin >> name;
         cout << "Enter password: ";
         cin >> pass;
-        int status = _db->authenticate(name, pass);
-        switch (status)
-        {
+
+        int status = _db->authenticate(name, pass); 
+        /* status code: */
+        // 0 : no user was found
+        // 1 : Employee
+        // 2 : Manager
+        switch (status)                             
+        {                                           
         case 0:
             cout << "Username or password is incorrect, try again"<< endl;
             break;
@@ -77,6 +82,7 @@ bool isValidClass(string cls) { return (cls == "A" || cls == "B" || cls == "C");
 
 void Menu::bookRoom()
 {
+    /* bookRoom flow */
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
@@ -207,10 +213,10 @@ void Menu::updatePrice() // manager enter price -> new price lower than the curr
         newPrice = 200;
 
     isLowerPrice = _m->priceUpdater(cls, newPrice); // returns currPrice - newPrice
-    cout << "The diff is " << isLowerPrice << endl;
+    // cout << "The diff is " << isLowerPrice << endl;
     if (isLowerPrice > 0) // newPrice is LOWER than currPrice!
     {
-        cout << "Your are about to get in the notify func! " << endl;
+        // option: ask the manager if he wants to mail all customers about the new price
         // notify all customers about the new *lower* price
         _db->notify(cls, isLowerPrice, newPrice); // currPrice = isLowerPrice + newPrice
     }
