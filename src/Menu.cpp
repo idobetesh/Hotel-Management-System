@@ -1,5 +1,8 @@
 #include "Menu.h"
 
+/* ----------------------------------------------------------------- MENUS ----------------------------------------------------------------- */
+
+/* General menu, including the login and authenticate user. Then creates a new manager/employee and going to the relevant menu*/
 void Menu::start()
 {
     string name, pass;
@@ -39,6 +42,7 @@ void Menu::start()
     }
 }
 
+/* This function shows the employee menu */
 void Menu::employeeMenu()
 {
     int userInput = -1;
@@ -58,7 +62,7 @@ void Menu::employeeMenu()
         switch (userInput)
         {
         case 0:
-            cout << _e->getName() << ", have a great day!";
+            cout << _e->getName() << ", have a great day!" << endl;
             break;
         case 1:
             bookRoom();
@@ -82,15 +86,71 @@ void Menu::employeeMenu()
     }
 }
 
+/* This function shows the manager menu */
+void Menu::managerMenu()
+{
+    int userInput = -1;
+    while (userInput != 0)
+    {
+        cout << "Welcome " << _m->getName() << endl;
+        cout << "What would you like to do? " << endl;
+        cout << "1 - Book a room" << endl;
+        cout << "2 - Check-in room" << endl;
+        cout << "3 - Check-out room" << endl;
+        cout << "4 - Watch available rooms" << endl;
+        cout << "5 - Update order" << endl;
+        cout << "6 - Update prices" << endl;
+        cout << "7 - Get report" << endl;
+        cout << "8 - Price List" << endl;
+        cout << "0 - Exit\n> ";
+        cin >> userInput;
+        switch (userInput)
+        {
+        case 0:
+            cout << _m->getName() << ", have a great day!" << endl;
+            break;
+        case 1:
+            this->bookRoom();
+            break;
+        case 2:
+            this->checkIn();
+            break;
+        case 3:
+            this->checkOut();
+            break;
+        case 4:
+            this->watchAvbRooms();
+            break;
+        case 5:
+            this->updateOrder();
+            break;
+        case 6:
+            this->updatePrice();
+            break;
+        case 7:
+            this->getReport();
+            break;
+        case 8:
+            this->priceList();
+            break;
+        default:
+            cout << "invalid input '" << userInput << "', try again" << endl;
+            break;
+        }
+    }
+}
+
+/* Validation of the class that was inserted [Internal-Usage-Function] */
 bool isValidClass(string cls) { return (cls == "A" || cls == "B" || cls == "C"); }
 
+/* The flow is written below. Book room function */
 void Menu::bookRoom()
 {
     /* bookRoom flow */
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
-    // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto 3
+    // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto  step 3
 
     string name, email, phone, sDate, eDate, cls;
     cout << "Please enter customer details - " << endl;
@@ -141,6 +201,7 @@ void Menu::bookRoom()
     cout << "Room No." << to_string(bookedRoom) << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
 }
 
+/* Includes two stages, one is the finding the order and deleting it from the DB, second is creating new order this DB->bookOrder function */
 void Menu::updateOrder()
 {
     string name, email, phone, sDate, eDate, cls;
@@ -209,11 +270,13 @@ void Menu::updateOrder()
     }
 }
 
+/* Generate report - MANAGER ONLY*/
 void Menu::getReport()
 {
     this->_m->getReport();
 }
 
+/* Printing the rooms and prices*/
 void Menu::priceList()
 {
     string pricesString = "============ Room Prices ============";
@@ -221,6 +284,7 @@ void Menu::priceList()
     cout << pricesString;
 }
 
+/* Checkin - takes the room number and then update the relevant field of the room in the DB */
 void Menu::checkIn()
 {
     int userInput;
@@ -236,6 +300,7 @@ void Menu::checkIn()
     }
 }
 
+/* CheckOut - takes the room number and then update the relevant field of the room in the DB */
 void Menu::checkOut()
 {
     int userInput;
@@ -251,6 +316,7 @@ void Menu::checkOut()
     }
 }
 
+/* This function lets employee/manager see list of availiable rooms in the hotel */
 void Menu::watchAvbRooms()
 {
     if (this->manager)
@@ -263,7 +329,10 @@ void Menu::watchAvbRooms()
     }
 }
 
-void Menu::updatePrice() // manager enter price -> new price lower than the current one ? mail customers : none
+/* This function lets the manager update room prices by this flow:
+    manager enter price -> new price lower than the current one ? mail customers : none
+*/
+void Menu::updatePrice() 
 {
     string cls;
     int newPrice;
@@ -281,68 +350,14 @@ void Menu::updatePrice() // manager enter price -> new price lower than the curr
 
     cout << "Enter new price - ";
     cin >> newPrice;
-    if (newPrice < 200) // 'last price!'
+    if (newPrice < 200) // 'last price - can't go lower than that!'
         newPrice = 200;
 
     isLowerPrice = _m->priceUpdater(cls, newPrice); // returns currPrice - newPrice
     // cout << "The diff is " << isLowerPrice << endl;
     if (isLowerPrice > 0) // newPrice is LOWER than currPrice!
     {
-        // option: ask the manager if he wants to mail all customers about the new price
         // notify all customers about the new *lower* price
         _db->notify(cls, isLowerPrice, newPrice); // currPrice = isLowerPrice + newPrice
-    }
-}
-
-void Menu::managerMenu()
-{
-    int userInput = -1;
-    while (userInput != 0)
-    {
-        cout << "Welcome " << _m->getName() << endl;
-        cout << "What would you like to do? " << endl;
-        cout << "1 - Book a room" << endl;
-        cout << "2 - Check-in room" << endl;
-        cout << "3 - Check-out room" << endl;
-        cout << "4 - Watch available rooms" << endl;
-        cout << "5 - Update order" << endl;
-        cout << "6 - Update prices" << endl;
-        cout << "7 - Get report" << endl;
-        cout << "8 - Price List" << endl;
-        cout << "0 - Exit\n> ";
-        cin >> userInput;
-        switch (userInput)
-        {
-        case 0:
-            cout << _m->getName() << ", have a great day!";
-            break;
-        case 1:
-            this->bookRoom();
-            break;
-        case 2:
-            this->checkIn();
-            break;
-        case 3:
-            this->checkOut();
-            break;
-        case 4:
-            this->watchAvbRooms();
-            break;
-        case 5:
-            this->updateOrder();
-            break;
-        case 6:
-            this->updatePrice();
-            break;
-        case 7:
-            this->getReport();
-            break;
-        case 8:
-            this->priceList();
-            break;
-        default:
-            cout << "invalid input '" << userInput << "', try again" << endl;
-            break;
-        }
     }
 }
