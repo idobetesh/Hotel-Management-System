@@ -524,6 +524,11 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
     sqlite3_close(db);
 }
 
+void DBConnector::updateOrder(string name, string sDtae, string eDate)
+{
+    
+}
+
 string DBConnector::getPricesString()
 {
     internalRefreshPriceMap();

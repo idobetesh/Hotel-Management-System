@@ -23,5 +23,6 @@ public:
     void watchAvbRooms();
     void isCustomerExist(Customer *c);
     int bookRoom(string cls,string sDate,string eDate, Customer *c);
+    void updateOrder(string name, string sDtae, string eDate);
     string getPrices();
 };

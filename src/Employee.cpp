@@ -40,3 +40,8 @@ string Employee::getPrices()
 {
     return _db->getPricesString();
 }
+
+void Employee::updateOrder(string name, string sDtae, string eDate)
+{
+    _db->updateOrder(name, sDtae, eDate);
+}

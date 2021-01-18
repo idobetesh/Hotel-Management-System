@@ -228,6 +228,7 @@ void Menu::managerMenu()
     while (userInput != 0)
     {
         cout << "Welcome " << _m->getName() << endl;
+        cout << "What would you like to do? " << endl;
         cout << "1 - Book a room" << endl;
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room" << endl;
