@@ -1,5 +1,7 @@
 #include "Employee.h"
 
+/* All of these functions are connected to the DB so that the main job is done within the DBConnector class*/
+
 Employee::Employee(string name) : _name(name)
 {
   _db = new DBConnector();
@@ -41,7 +43,7 @@ string Employee::getPrices()
     return _db->getPricesString();
 }
 
-void Employee::updateOrder(string name, string sDtae, string eDate)
+int Employee::updateOrder(Customer *c, string sDate, string eDate)
 {
-    _db->updateOrder(name, sDtae, eDate);
+    return _db->updateOrder(c, sDate, eDate);
 }

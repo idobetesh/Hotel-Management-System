@@ -1,0 +1,28 @@
+*** This report created on 18-Jan-2021 at 09:32:31 ***
+
+* Total rooms occupied: 4
+
+* Current rooms occupied:
+	- Room No.1 is occupied | class: A
+	- Room No.5 is occupied | class: B
+	- Room No.7 is occupied | class: B
+	- Room No.8 is occupied | class: C
+
+
+* Profit:
+	- Total Profit: 3460₪
+	- Average profit per room: 865₪
+
+* Total Future Orders: 4
+
+* Future Orders Details:
+	- From 2021-01-24 To 2021-01-19 | Room No. 2
+	- From 2021-01-16 To 2021-01-19 | Room No. 1
+	- From 2021-01-16 To 2021-01-18 | Room No. 1
+	- From 2021-01-16 To 2021-01-18 | Room No. 3
+
+
+* Current Room Prices:
+- Class - 'A' | 1860₪ per night.
+- Class - 'B' | 700₪ per night.
+- Class - 'A' | 200₪ per night.

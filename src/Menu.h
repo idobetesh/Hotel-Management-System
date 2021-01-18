@@ -26,4 +26,5 @@ public:
     void employeeMenu();
     void managerMenu();
     void priceList();
+    void updateOrder();
 };

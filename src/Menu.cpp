@@ -50,6 +50,7 @@ void Menu::employeeMenu()
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room " << endl;
         cout << "4 - Watch available rooms" << endl;
+        cout << "5 - Update order" << endl;
         cout << "0 - Exit\n> ";
 
         cin >> userInput;
@@ -70,6 +71,9 @@ void Menu::employeeMenu()
             break;
         case 4:
             watchAvbRooms();
+            break;
+        case 5:
+            updateOrder();
             break;
         default:
             cout << "invalid input, try again" << endl;
@@ -135,6 +139,74 @@ void Menu::bookRoom()
         }
     }
     cout << "Room No." << to_string(bookedRoom) << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
+}
+
+void Menu::updateOrder()
+{
+    string name, email, phone, sDate, eDate, cls;
+    cout << "Please enter customer details - " << endl;
+    cout << "Name - ";
+    fflush(stdin);
+    getline(cin, name);
+    cout << "Email - ";
+    cin >> email;
+    cout << "Phone - ";
+    cin >> phone;
+    Customer *c = new Customer(name, email, phone);
+
+    int roomToUpdate = 0;
+    while (roomToUpdate == 0)
+    {
+        cout << "Start date in format yyyy-mm-dd\n> ";
+        cin >> sDate;
+        cout << "End date in format yyyy-mm-dd\n> ";
+        cin >> eDate;
+
+        if (this->manager)
+        {
+            roomToUpdate = _m->updateOrder(c, sDate, eDate); // should return room number when possible else 0
+        }
+        else
+        {
+            roomToUpdate = _e->updateOrder(c, sDate, eDate);
+        }
+    }
+    if (roomToUpdate != -1) { // if returns -1 it means that the input was wrong. print to the screen is from the DBConnector.
+        cout << "Order from " << sDate << " to " << eDate << " has removed" << endl;
+        cout << "Would you like to place new order? [Y/N]\n> ";
+        
+        string ans = "";
+
+        while (true)
+        {
+            cin >> ans;
+            if(ans == "Y" || ans == "N")
+                break;
+
+            cout << "Invalid answer, Would you like to place new order? [Y/N]\n> ";
+        }
+        if(ans == "Y")
+        {
+            int isRoomBooked = 0;
+            while(isRoomBooked == 0)
+            {
+                cout << "Enter new start date in format yyyy-mm-dd\n> ";
+                cin >> sDate;
+                cout << "Enter new end date in format yyyy-mm-dd\n> ";
+                cin >> eDate;
+                cout << "Enter the class of the room - "<< endl;
+                cin >> cls;
+                if(this->manager){
+                    isRoomBooked = _m->bookRoom(cls, sDate, eDate, c);
+                }
+                else
+                {
+                    isRoomBooked = _e->bookRoom(cls, sDate, eDate, c);
+                }
+            }
+            cout << "Room No." << to_string(isRoomBooked) << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
+        }
+    }
 }
 
 void Menu::getReport()
@@ -233,9 +305,10 @@ void Menu::managerMenu()
         cout << "2 - Check-in room" << endl;
         cout << "3 - Check-out room" << endl;
         cout << "4 - Watch available rooms" << endl;
-        cout << "5 - Update prices" << endl;
-        cout << "6 - Get report" << endl;
-        cout << "7 - Price List" << endl;
+        cout << "5 - Update order" << endl;
+        cout << "6 - Update prices" << endl;
+        cout << "7 - Get report" << endl;
+        cout << "8 - Price List" << endl;
         cout << "0 - Exit\n> ";
         cin >> userInput;
         switch (userInput)
@@ -256,12 +329,15 @@ void Menu::managerMenu()
             this->watchAvbRooms();
             break;
         case 5:
-            this->updatePrice();
+            this->updateOrder();
             break;
         case 6:
-            this->getReport();
+            this->updatePrice();
             break;
         case 7:
+            this->getReport();
+            break;
+        case 8:
             this->priceList();
             break;
         default:

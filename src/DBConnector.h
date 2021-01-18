@@ -26,5 +26,5 @@ public:
     int authenticate(string name,string pass);
     string getPricesString();
     void notify(string cls, int priceDiff, int newPrice);
-    void updateOrder(string name, string sDtae, string eDate);
+    int updateOrder(Customer *c, string sDate, string eDate);
 };
