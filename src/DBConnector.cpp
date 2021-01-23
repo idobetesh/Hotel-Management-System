@@ -22,7 +22,8 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
     printf("\n");
     return 0;
 }
-/* Go over each value returned from the query, adding it to returnData vector*/
+
+/* Go over each value returned from the query, adding it to returnData vector */
 static int callbackPrices(void *NotUsed, int argc, char **argv, char **azColName)
 {
     for (int i = 0; i < argc; i++)
@@ -31,6 +32,7 @@ static int callbackPrices(void *NotUsed, int argc, char **argv, char **azColName
     }
     return 0;
 }
+
 /* Go over each value returned from the query, adding it to returnData vector but decrease the '0' to get the ascii */
 static int tmpcallback(void *NotUsed, int argc, char **argv, char **azColName)
 {
@@ -40,6 +42,7 @@ static int tmpcallback(void *NotUsed, int argc, char **argv, char **azColName)
     }
     return 0;
 }
+
 /* Go over each value returned from the query, adding it to returnRooms vector and adding it as int from string(comes like this from the DB)*/
 static int callbackRooms(void *NotUsed, int argc, char **argv, char **azColName)
 {
@@ -49,6 +52,7 @@ static int callbackRooms(void *NotUsed, int argc, char **argv, char **azColName)
     }
     return 0;
 }
+
 /* Go over each value returned from the query(only one will come back), placing it to CustomerID and adding it as int from string(comes like this from the DB)*/
 static int callbackCustomerID(void *NotUsed, int argc, char **argv, char **azColName)
 {
@@ -58,6 +62,7 @@ static int callbackCustomerID(void *NotUsed, int argc, char **argv, char **azCol
     }
     return 0;
 }
+
 /* Go over each value returned from the query(only one will come back), placing it to orderID and adding it as int from string(comes like this from the DB)*/
 static int callbackOrderID(void *NotUsed, int argc, char **argv, char **azColName)
 {
