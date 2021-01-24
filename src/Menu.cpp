@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include "EnableEcho.h"
 
 /* ----------------------------------------------------------------- MENUS ----------------------------------------------------------------- */
 
@@ -160,7 +161,7 @@ void Menu::bookRoom()
     // 1 - enter customer details + order details[dates, that type of room]
     // 2 - check if customer already exist ? continue : create Customer
     // 3 - check availability of the room
-    // 4 - if there is a free room ? book the room : ask for different dates/ other class of room and goto  step 3
+    // 4 - if there is a free room ? book the room : ask for different dates / other class of room and goto step 3
 
     string name, email, phone, sDate, eDate, cls;
     cout << "Please enter customer details - " << endl;
@@ -208,7 +209,7 @@ void Menu::bookRoom()
             bookedRoom = _e->bookRoom(cls, sDate, eDate, c);
         }
     }
-    cout << "Room No." << to_string(bookedRoom) << " from class " << cls << " is booked from " << sDate << " to " << eDate << endl;
+    cout << "Room No." << to_string(bookedRoom) << " from class " << cls << " is booked " << endl;
 }
 
 /* Includes two stages, one is the finding the order and deleting it from the DB, second is creating new order this DB->bookOrder function */
@@ -243,7 +244,7 @@ void Menu::updateOrder()
         }
     }
     if (roomToUpdate != -1) { // if returns -1 it means that the input was wrong. print to the screen is from the DBConnector.
-        cout << "Order from " << sDate << " to " << eDate << " has removed" << endl;
+        cout << "Order has removed" << endl;
         cout << "Would you like to place new order? [Y/N]\n> ";
         
         string ans = "";

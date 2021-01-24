@@ -4,7 +4,6 @@
 #include <string>
 #include "DBConnector.h"
 #include "Manager.h"
-#include "EnableEcho.h"
 using namespace std;
 class Menu
 {
@@ -12,10 +11,10 @@ private:
     DBConnector *_db;
     Employee *_e;
     Manager *_m;
-    bool manager = false;
+    bool manager;
 
 public:
-    Menu(){};
+    Menu(){ manager = false; };
     ~Menu();
     void start();
     void bookRoom();

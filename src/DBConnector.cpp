@@ -478,7 +478,7 @@ void DBConnector::generateReport()
         sqlite3_close(db);
     }
 
-    reportFile << "\n\n* Total Future Orders: " << returnData.size() / 3 << "\n\n* Future Orders Details:\n";
+    reportFile << "\n\n* Total Future Orders [Monthly]: " << returnData.size() / 3 << "\n\n* Future Orders Details [Monthly]:\n";
     string futureOrd = "";
     for (int i = 0; i < returnData.size(); i++) // <sDate, eDate, idRoom>
     {
@@ -504,9 +504,15 @@ void DBConnector::generateReport()
 /* This function lets the employee/manager place a new order when customer asks for one */
 int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
-    if (!(isValidDate(sDate) && isValidDate(eDate))) // both dates are valid
-        return 0;
-
+    string newsDate = sDate;
+    string neweDate = eDate;
+    while (!(isValidDate(newsDate) && isValidDate(neweDate))) // both dates are valid
+    {
+        cout << "Start date in format yyyy-mm-dd\n> ";
+        cin >> newsDate;
+        cout << "End date in format yyyy-mm-dd\n> ";
+        cin >> neweDate;
+    }
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
@@ -526,7 +532,7 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
         for (int i = 0; i < returnedRooms.size(); i++)
         {
             rc = sqlite3_open(DB, &db);
-            queryString = "SELECT * FROM Dates WHERE '" + sDate + "' >= arrivalDate AND '" + sDate + "' <= departureDate AND idRoom = " + to_string(returnedRooms[i]);
+            queryString = "SELECT * FROM Dates WHERE '" + newsDate + "' >= arrivalDate AND '" + newsDate + "' <= departureDate AND idRoom = " + to_string(returnedRooms[i]);
             query = queryString.c_str();
             rc = sqlite3_exec(db, query, tmpcallback, 0, &zErrMsg);
 
@@ -536,7 +542,7 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
                 sqlite3_close(db);
 
                 rc = sqlite3_open(DB, &db);
-                int diffInDays = datesDiff(sDate, eDate);
+                int diffInDays = datesDiff(newsDate, neweDate);
                 returnData.clear();
                 internalRefreshPriceMap();
                 int totalPrice = priceMap[cls] * (diffInDays - 1);
@@ -558,7 +564,7 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
                 sqlite3_close(db);
 
                 rc = sqlite3_open(DB, &db);
-                queryString = "INSERT INTO Dates (idRoom, arrivalDate, departureDate, idOrder) values(" + to_string(returnedRooms[i]) + ", '" + sDate + "', '" + eDate + "', " + to_string(orderID) + ")";
+                queryString = "INSERT INTO Dates (idRoom, arrivalDate, departureDate, idOrder) values(" + to_string(returnedRooms[i]) + ", '" + newsDate + "', '" + neweDate + "', " + to_string(orderID) + ")";
                 query = queryString.c_str();
                 rc = sqlite3_exec(db, query, callbackOrderID, 0, &zErrMsg);
                 sqlite3_close(db);
@@ -581,8 +587,15 @@ int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
     // -1: error
     // 1: successfully updated
 
-    if (!(isValidDate(sDate) && isValidDate(eDate))) // both dates are valid
-        return -1;
+    string newsDate = sDate;
+    string neweDate = eDate;
+    while (!(isValidDate(newsDate) && isValidDate(neweDate))) // both dates are valid
+    {
+        cout << "Start date in format yyyy-mm-dd\n> ";
+        cin >> newsDate;
+        cout << "End date in format yyyy-mm-dd\n> ";
+        cin >> neweDate;
+    }
 
     sqlite3 *db;
     char *zErrMsg = 0;
