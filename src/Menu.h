@@ -4,6 +4,7 @@
 #include <string>
 #include "DBConnector.h"
 #include "Manager.h"
+#include "EnableEcho.h"
 using namespace std;
 class Menu
 {
@@ -27,4 +28,6 @@ public:
     void managerMenu();
     void priceList();
     void updateOrder();
+    void addNewEmployee();
+    void deleteEmployee();
 };

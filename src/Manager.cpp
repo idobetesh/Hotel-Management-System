@@ -13,3 +13,13 @@ void Manager::getReport()
 {
     _db->generateReport();
 }
+
+void Manager::addNewEmployee(string name, string password, bool isManager)
+{
+    _db->addNewEmployeeToDB(name, password, isManager);
+}
+
+void Manager::deleteEmployee(string name, string password)
+{
+    _db->deleteEmployeeFromDB(name, password);
+}

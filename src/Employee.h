@@ -17,12 +17,12 @@ public:
     ~Employee();
 
     string getName() { return _name; }
+    string getPrices();
     void addCustomer(Customer *c);
-    void checkIn(int roomNumber);
+    void checkIn(string name,string email);
     void checkOut(int roomNumber);
     void watchAvbRooms();
     void isCustomerExist(Customer *c);
     int bookRoom(string cls,string sDate,string eDate, Customer *c);
     int updateOrder(Customer *c, string sDate, string eDate);
-    string getPrices();
 };

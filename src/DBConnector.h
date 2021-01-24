@@ -14,17 +14,21 @@ class DBConnector
 {
 public:
     DBConnector();
+    ~DBConnector();
+
     void addCustomer(Customer *c);
-    int updatePrice(string cls, int newPrice);
     void watchAvbRooms();
-    void checkIn(int roomNumber);
+    void checkIn(string name,string email);
     void checkOut(int roomNumber);
     void isCustomerExist(Customer *c);
     void generateReport();
     void refreshPriceMap();
+    void notify(string cls, int priceDiff, int newPrice);
+    void addNewEmployeeToDB(string name, string password, bool isManager);
+    void deleteEmployeeFromDB(string name, string password);
+    int updatePrice(string cls, int newPrice);
     int bookRoom(string cls,string sDate,string eDate, Customer *c);
     int authenticate(string name,string pass);
-    string getPricesString();
-    void notify(string cls, int priceDiff, int newPrice);
     int updateOrder(Customer *c, string sDate, string eDate);
+    string getPricesString();
 };

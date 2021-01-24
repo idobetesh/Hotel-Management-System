@@ -7,11 +7,11 @@ int customerID = 0;
 int orderID = 0;
 unordered_map<string, int> priceMap;
 
-DBConnector::DBConnector() {}
+DBConnector::DBConnector() {};
 
 /* ---------------------------------------------- Callback-Functions ---------------------------------------------- */
 
-/* Go over each value returned from the query, adding it to returnData vector and printing(Use for the WatchavbRooms function) */
+/* Go over each value returned from the query, adding it to returnData vector and printing(Use for the WatchAvbRooms function) */
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
     for (int i = 0; i < argc; i++)
@@ -113,7 +113,7 @@ int datesDiff(string date_s, string date_e)
 }
 
 /* This function makes sure all prices are up to date and keeps update them in local hashmap 'priceMap' <class, price_per_night> */
-void internalRefreshPriceMap() 
+void internalRefreshPriceMap()
 {
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -170,6 +170,21 @@ void refreshOrders()
         rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
         sqlite3_close(db);
     }
+}
+
+/* This function checks if date is valid and returns a boolean */
+bool isValidDate(string date)
+{
+    const char *dateChar = date.c_str();    
+    struct tm tm;
+
+    if (!strptime(dateChar, "%Y-%m-%d", &tm))
+    {
+        cout << "One date or more is NOT valid\n";
+        return false;
+    }
+
+    return true;
 }
 
 /* ---------------------------------------------- Database-Access-Functions ---------------------------------------------- */
@@ -251,12 +266,20 @@ void DBConnector::watchAvbRooms()
     sqlite3_close(db);
 }
 
-/* This function called when a customer arrives the hotel */
-void DBConnector::checkIn(int roomNumber)
+/* This function called when a customer arrives the hotel, it checks if there is an order under the customer's name
+   also checks if the date is correct  */
+void DBConnector::checkIn(string name, string email)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
+    time_t currTime;
+    struct tm *timeInfo;
+    char today[12]; // YYYY-MM-DD
+    currTime = time(NULL);
+    timeInfo = localtime(&currTime);
+    strftime(today, 12, "%Y-%m-%d", timeInfo);
+    string todayStr(today);
 
     if (rc)
     {
@@ -265,12 +288,53 @@ void DBConnector::checkIn(int roomNumber)
     }
     else
     {
-        string queryString = "UPDATE Rooms SET isTaken = 1 WHERE idRoom = " + to_string(roomNumber);
+        customerID = 0;
+        string queryString = "SELECT idCustomer FROM Customers WHERE name = '" + name + "' AND email = '" + email + "'";
         const char *query = queryString.c_str();
-        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+        sqlite3_close(db);
     }
-    returnData.clear();
+    if (customerID == 0)
+    {
+        cout << "Customer does not exist!" << endl;
+        return;
+    }
+    rc = sqlite3_open(DB, &db);
+    int tmpCustomerId = customerID;
+    customerID = 0;
+    string queryString = "SELECT idOrder FROM Orders WHERE idCustomer = " + to_string(tmpCustomerId);
+    const char *query = queryString.c_str();
+    rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
     sqlite3_close(db);
+    if (customerID == 0)
+    {
+        cout << "Customer does not have an order!" << endl;
+        return;
+    }
+    rc = sqlite3_open(DB, &db);
+    queryString = "SELECT arrivalDate FROM Dates WHERE idOrder = " + to_string(customerID);
+    returnData.clear();
+    query = queryString.c_str();
+    rc = sqlite3_exec(db, query, callbackPrices, 0, &zErrMsg);
+    sqlite3_close(db);
+    int result = datesDiff(returnData[0], todayStr);
+    if (result == 0)
+    {
+        int rc = sqlite3_open(DB, &db);
+        queryString = "SELECT idRoom FROM Orders WHERE idOrder = " + to_string(customerID);
+        query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+        sqlite3_close(db);
+        rc = sqlite3_open(DB, &db);
+        queryString = "UPDATE Rooms SET isTaken = 1 WHERE idRoom = " + to_string(customerID);
+        query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+        sqlite3_close(db);
+        returnData.clear();
+        cout << "The room is check-in" << endl;
+        return;
+    }
+    cout << "The customer's order is not today! It is in " << to_string(result) << " days!" << endl;
 }
 
 /* This function called when a customer leaves the hotel */
@@ -293,6 +357,7 @@ void DBConnector::checkOut(int roomNumber)
     }
     returnData.clear();
     sqlite3_close(db);
+    refreshOrders();
 }
 
 /* This function checks if customer is already exists in the DB */
@@ -327,7 +392,7 @@ void DBConnector::isCustomerExist(Customer *c)
 }
 
 /* This function generates a general report for the manager to see his income, profit, monthly future orders, etc 
-   These reports save to local folder called 'Report'*/
+   These reports save to local folder called 'Report' */
 void DBConnector::generateReport()
 {
     internalRefreshPriceMap();
@@ -432,13 +497,16 @@ void DBConnector::generateReport()
     }
     reportFile << futureOrd << "\n\n* Current Room Prices:" << getPricesString();
 
-    cout << "New report '" << title << "' has created in 'Reports' folder" << endl;
+    cout << "New report '" << title << "' has created in ./Reports folder" << endl;
     reportFile.close();
 }
 
 /* This function lets the employee/manager place a new order when customer asks for one */
 int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
 {
+    if (!(isValidDate(sDate) && isValidDate(eDate))) // both dates are valid
+        return 0;
+
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
@@ -509,6 +577,13 @@ int DBConnector::bookRoom(string cls, string sDate, string eDate, Customer *c)
 /* This function lets the employee/manager make a change or delete a specific order */
 int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
 {
+    // possible return values:
+    // -1: error
+    // 1: successfully updated
+
+    if (!(isValidDate(sDate) && isValidDate(eDate))) // both dates are valid
+        return -1;
+
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc = sqlite3_open(DB, &db);
@@ -525,6 +600,7 @@ int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
         sqlite3_close(db);
+        cout << "customer: " << customerID << endl;
         if (customerID == -1)
         {
             cout << "Bad input, the Customer was not found" << endl;
@@ -545,6 +621,7 @@ int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
                 returnedRooms.clear();
                 rc = sqlite3_exec(db, query, callbackRooms, 0, &zErrMsg);
                 sqlite3_close(db);
+                cout << "idOrder : " << returnedRooms[0]<< endl;
                 if (returnedRooms.size() == 0)
                 {
                     cout << "No orders exist for this cutomer" << endl;
@@ -560,6 +637,7 @@ int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
                         query = queryString.c_str();
                         rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
                         sqlite3_close(db);
+                        cout << "idRoom: " << customerID << endl;
                         if (customerID != -1)
                         {
                             rc = sqlite3_open(DB, &db);
@@ -575,10 +653,10 @@ int DBConnector::updateOrder(Customer *c, string sDate, string eDate)
                             rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
                             sqlite3_close(db);
                             return 1;
-                        } 
+                        }
                         else
                         {
-                            cout << "No order found in the wanted dates." << endl;
+                            cout << "No order was found between " << sDate << " and " << eDate << endl;
                             return -1;
                         }
                     }
@@ -662,7 +740,7 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
         string queryString = "SELECT name, email FROM Customers";
         // cout << queryString << endl;
         const char *query = queryString.c_str();
-        rc = sqlite3_exec(db, query, callback, 0, &zErrMsg);
+        rc = sqlite3_exec(db, query, callbackPrices, 0, &zErrMsg);
     }
 
     /* returnData vector format => <name, email, ...> */
@@ -678,7 +756,7 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
     double precentOff = (1 - (double(newPrice) / double(priceDiff + newPrice))) * 100;
     string precentOffStr = to_string(precentOff);
 
-    // precentOffStr.substr(0, 5) 25.7892 -> 25.78
+    //example: precentOffStr.substr(0, 5) 25.7892 -> 25.78
     string header = "*** Don't Miss This One! ***\n\n";
 
     emailCopyFile.open("./Emails/" + title);
@@ -697,4 +775,56 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
     }
     returnData.clear();
     emailCopyFile.close();
+    cout << "Email was send to all customers notifing them about the new price. \nCheck your ./Emails folder for a copy." << endl;
+}
+
+/* This function lets [managers only] to add new employee to the DB given his name, password and bool isManager */
+void DBConnector::addNewEmployeeToDB(string name, string password, bool isManager)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        int isManagerInt = isManager ? 1 : 0;
+        string queryString = "INSERT INTO Users (name, pass, isManager) values('" + name + "', '" + password + "', " + to_string(isManagerInt) + ")";
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+    }
+    if (isManager)
+        cout << "New Manager '" << name << "' added successfully to DB" << endl;
+    else
+        cout << "New Employee '" << name << "' added successfully to DB" << endl;
+
+    customerID = 0;
+    sqlite3_close(db);
+}
+
+/* This function lets [managers only] to delete an employee from the DB given his name and password */
+void DBConnector::deleteEmployeeFromDB(string name, string password)
+{
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc = sqlite3_open(DB, &db);
+
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    else
+    {
+        string queryString = "DELETE FROM Users WHERE name = '" + name + "' AND pass = '" + password + "'";
+        const char *query = queryString.c_str();
+        rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
+    }
+    customerID = 0;
+    sqlite3_close(db);
+    cout << "Employee '" << name << "' has removed successfully from DB" << endl;
 }

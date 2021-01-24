@@ -7,9 +7,9 @@ Employee::Employee(string name) : _name(name)
   _db = new DBConnector();
 }
 
-void Employee::checkIn(int roomNumber)
+void Employee::checkIn(string name, string email)
 {
-  _db->checkIn(roomNumber);
+  _db->checkIn(name, email);
 }
 
 void Employee::checkOut(int roomNumber)

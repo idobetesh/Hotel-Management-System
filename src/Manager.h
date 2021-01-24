@@ -9,4 +9,6 @@ public:
 
     int priceUpdater(string cls, int newPrice);
     void getReport();
+    void addNewEmployee(string name, string password, bool isManager);
+    void deleteEmployee(string name, string password);
 };

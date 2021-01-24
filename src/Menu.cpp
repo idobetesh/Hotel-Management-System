@@ -11,9 +11,11 @@ void Menu::start()
         cout << "================ Welcome To Hotel California ================" << endl;
         cout << "Enter username: ";
         cin >> name;
+        SetStdinEcho(false); // Hiding the input in the password
         cout << "Enter password: ";
         cin >> pass;
-
+        cout << "\n";
+        SetStdinEcho(true);
         int status = _db->authenticate(name, pass); 
         /* status code: */
         // 0 : no user was found
@@ -102,6 +104,8 @@ void Menu::managerMenu()
         cout << "6 - Update prices" << endl;
         cout << "7 - Get report" << endl;
         cout << "8 - Price List" << endl;
+        cout << "9 - Add New Employee" << endl;
+        cout << "10 - Delete Employee" << endl;
         cout << "0 - Exit\n> ";
         cin >> userInput;
         switch (userInput)
@@ -132,6 +136,12 @@ void Menu::managerMenu()
             break;
         case 8:
             this->priceList();
+            break;
+        case 9:
+            this->addNewEmployee();
+            break;
+        case 10:
+            this->deleteEmployee();
             break;
         default:
             cout << "invalid input '" << userInput << "', try again" << endl;
@@ -287,16 +297,19 @@ void Menu::priceList()
 /* Checkin - takes the room number and then update the relevant field of the room in the DB */
 void Menu::checkIn()
 {
-    int userInput;
-    cout << "Enter room number - ";
-    cin >> userInput;
+    string name, email;
+    cout << "Enter client name - ";
+    fflush(stdin);
+    getline(cin, name);
+    cout << "Enter client email - ";
+    cin >> email;
     if (this->manager)
     {
-        this->_m->checkIn(userInput);
+        this->_m->checkIn(name,email);
     }
     else
     {
-        this->_e->checkIn(userInput);
+        this->_e->checkIn(name,email);
     }
 }
 
@@ -330,8 +343,7 @@ void Menu::watchAvbRooms()
 }
 
 /* This function lets the manager update room prices by this flow:
-    manager enter price -> new price lower than the current one ? mail customers : none
-*/
+    manager enter price -> new price lower than the current one ? mail customers : none */
 void Menu::updatePrice() 
 {
     string cls;
@@ -360,4 +372,41 @@ void Menu::updatePrice()
         // notify all customers about the new *lower* price
         _db->notify(cls, isLowerPrice, newPrice); // currPrice = isLowerPrice + newPrice
     }
+}
+
+/* This function adds new Employee, asking for name and pass and then adding it to the DB*/
+    void Menu::addNewEmployee()
+    {
+        string name, password;
+        int isManger; 
+        cout << "Enter employee name - " << endl;
+        fflush(stdin);
+        getline(cin, name);
+        cout << "Enter employee password - " << endl;
+        cin >> password;
+        cout << "Is the Employee a manager? (0 / 1)" << endl;
+        cin >> isManger;
+        if(isManger == 0)
+            this->_m->addNewEmployee(name,password, false);
+        if (isManger == 1)
+            this->_m->addNewEmployee(name,password,true);
+        if(isManger < 0 || isManger > 1 || name == "" || password == "")
+            cout << "Bad input!"<< endl;        
+    }
+    
+/* This function deletes an Employee */
+void Menu::deleteEmployee()
+{
+    string name, password; 
+    cout << "Enter employee name - " << endl;
+    fflush(stdin);
+    getline(cin, name);
+    cout << "Enter employee password - " << endl;
+    cin >> password;
+    if(name == "" || password == "")
+    {
+        cout << "Bad inputs!" << endl;
+        return;
+    }
+    this->_m->deleteEmployee(name, password);     
 }
