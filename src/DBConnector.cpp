@@ -705,9 +705,7 @@ int DBConnector::authenticate(string name, string pass)
     }
     else
     {
-        // fprintf(stderr, "Opened database successfully\n");
         string queryString = "SELECT isManager FROM Users WHERE name = '" + name + "' AND pass = '" + pass + "'";
-        // cout << queryString << endl;
         const char *query = queryString.c_str();
         customerID = -1;
         rc = sqlite3_exec(db, query, callbackCustomerID, 0, &zErrMsg);
@@ -749,9 +747,7 @@ void DBConnector::notify(string cls, int priceDiff, int newPrice)
     else
     {
         returnData.clear();
-        // fprintf(stderr, "Opened database successfully\n");
         string queryString = "SELECT name, email FROM Customers";
-        // cout << queryString << endl;
         const char *query = queryString.c_str();
         rc = sqlite3_exec(db, query, callbackPrices, 0, &zErrMsg);
     }

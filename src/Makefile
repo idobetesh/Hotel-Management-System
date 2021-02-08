@@ -1,5 +1,5 @@
 main: Employee.o Manager.o DBConnector.o Customer.o Menu.o main.o
-	g++ --std=c++11 Employee.o Manager.o DBConnector.o Customer.o Menu.o main.o -l sqlite3 -o main
+	g++ Employee.o Manager.o DBConnector.o Customer.o Menu.o main.o -l sqlite3 -o main
 
 Employee.o: Employee.cpp
 	g++ -c Employee.cpp	
